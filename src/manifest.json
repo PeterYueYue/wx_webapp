@@ -1,0 +1,22 @@
+{
+  "name": "无锡平台中台",
+  "short_name": "Ant Design Pro",
+  "display": "standalone",
+  "start_url": "./?utm_source=homescreen",
+  "theme_color": "#002140",
+  "background_color": "#001529",
+  "icons": [
+    {
+      "src": "http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png",
+      "sizes": "512x512"
+    }
+  ]
+}
