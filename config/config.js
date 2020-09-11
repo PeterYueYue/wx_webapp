@@ -53,7 +53,7 @@ export default defineConfig({
               icon: 'user',
               name: 'supervisor',
               "routes":[
-                { path: '/supervisor/supervisorManage', name: 'supervisor', component: './supervisor/supervisorManage', }, //督导员管理 
+                { path: '/supervisor/supervisorManage', name: 'supervisorManage', component: './supervisor/supervisorManage', }, //督导员管理 
               ]
             },
             {
@@ -61,8 +61,8 @@ export default defineConfig({
               icon: 'user',
               name: 'media',
               "routes":[
-                { path: '/media/banner', name: 'media', component: './media/banner', }, //轮播图管理 
-                { path: '/media/notice', name: 'media', component: './media/notice', }, //公告管理 
+                { path: '/media/banner', name: 'banner', component: './media/banner', }, //轮播图管理 
+                { path: '/media/notice', name: 'notice', component: './media/notice', }, //公告管理 
               ]
             },
             {
