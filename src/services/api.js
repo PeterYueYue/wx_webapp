@@ -3,8 +3,8 @@
 // const api = "http://sgmark.shishangbag.vip"  //张强
 // const api = "http://192.168.20.13:19999"   //美霞
 
-const testDomin = "http://cat.shishangbag.vip/"//cat
-const formalDomain = "http://cat.shishangbag.vip/"//正式
+const testDomin = "https://gateway.wuxigf.com/"//cat
+const formalDomain = "https://gateway.wuxigf.com/"//正式
 const env = process.env.NODE_ENV
 const api = env === 'development' ? testDomin : formalDomain
 export default api;

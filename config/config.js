@@ -49,6 +49,23 @@ export default defineConfig({
               redirect:'/shop/product',
             },
             {
+              path: '/supervisor',//督导员
+              icon: 'user',
+              name: 'supervisor',
+              "routes":[
+                { path: '/supervisor/supervisorManage', name: 'supervisorManage', component: './supervisor/supervisorManage', }, //督导员管理 
+              ]
+            },
+            {
+              path: '/media',//公告管理
+              icon: 'user',
+              name: 'media',
+              "routes":[
+                { path: '/media/banner', name: 'banner', component: './media/banner', }, //轮播图管理 
+                { path: '/media/notice', name: 'notice', component: './media/notice', }, //公告管理 
+              ]
+            },
+            {
               path: '/shop',//商品列表
               name: 'shop',
               icon: 'shop',
