@@ -87,34 +87,24 @@ const Product = (props) => {
 
   const columns = [
     {
-      title: '分类图片',
-      dataIndex: 'longMainPic',
+      title: '轮播图',
+      dataIndex: 'picUrl',
       hideInSearch: true,
       hideInForm: false,
-      render: text => <img alt="商品图片" style={{ width: 100, height: 50 }} src={text} />,
-    },
-    {
-      title: '分类名称',
-      dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
+      render: text => <img alt="轮播图片" style={{ width: 100, height: 50 }} src={text} />,
     },
     {
       title: '状态',
-      dataIndex: 'isShow',
+      dataIndex: 'bannerFlag',
       hideInForm: false,
       hideInSearch: true,
       valueEnum: {
         0: {
-          text: '下架',
+          text: '隐藏',
           status: 'Default',
         },
         1: {
-          text: '上架',
+          text: '显示',
           status: 'Success',
         },
       },
@@ -161,7 +151,7 @@ const Product = (props) => {
       ),
     },
   ];
-  // 商品类型列表
+  // 列表
   const getProductList = (params) => {
     return props.dispatch({
       type: 'productSort/productList',
@@ -192,7 +182,7 @@ const Product = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'productType.delete',
+          'method': 'system.banner.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
@@ -213,7 +203,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="列表"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -263,7 +253,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            个轮播&nbsp;&nbsp;
           </div>
         )}
         request={params => getProductList(params)}

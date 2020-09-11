@@ -45,17 +45,17 @@ const CreateForm = (props) => {
   const editImg = (result) => {
     let fileList1 = [{
       uid: result.id,
-      name: "商品类型图",
+      name: "轮播图",
       status: 'done',
-      url: result.longMainPic,
-      response:{shortImgUrl:result.mainPic}
+      url: result.picUrl,
+      response:{imgUrl:result.picUrl}
     }]
     setFileList1(fileList1)
   }
   const onFinish = values => {
     let mainPic = '';
     if (fileList1.length > 0) {
-      mainPic = fileList1[0].response.shortImgUrl;
+      mainPic = fileList1[0].response.imgUrl;
     } else {
       message.warning('请添加图片');
     }
@@ -63,12 +63,12 @@ const CreateForm = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          "method": itemId?"productType.update":"productType.save",
+          "method": itemId?"system.banner.update":"system.banner.save",
           "biz_content": JSON.stringify({
             "id":itemId?itemId:'',
             "name": values.name,
-            "mainPic": mainPic,
-            "isShow": values.isShow,
+            "picUrl": mainPic,
+            "bannerFlag": values.bannerFlag,
           })
         })
       }
@@ -92,7 +92,7 @@ const CreateForm = (props) => {
     <Modal
       // destroyOnClose
       getContainer={false}
-      title="商品分类"
+      title="新建"
       visible={modalVisible}
       onOk={() => onFinish()}
       onCancel={() => props.onCancel()}
@@ -101,16 +101,13 @@ const CreateForm = (props) => {
     >
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name={['name']} label="分类名称" rules={[{ required: true }]}  >
-          <Input style={{ width: '300px' }} />
-        </Form.Item>
-        <Form.Item name={['isShow']} label="状态" rules={[{ required: true }]}>
+        <Form.Item name={['bannerFlag']} label="状态" rules={[{ required: true }]}>
           <Radio.Group onChange={onChange} value={0}>
             <Radio value={1}>显示</Radio>
             <Radio value={0}>隐藏</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item className={style.formItem1} name={['mainPic']} label="分类主图" rules={[{ required: true }]}>
+        <Form.Item className={style.formItem1} name={['picUrl']} label="轮播图" rules={[{ required: true }]}>
           <Col className={style.uploadBox} span={3}>
             <UploadImg length={1} onChange={handleChange1} fileList={fileList1} />
           </Col>

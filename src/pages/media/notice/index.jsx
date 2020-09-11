@@ -87,34 +87,50 @@ const Product = (props) => {
 
   const columns = [
     {
-      title: '分类图片',
-      dataIndex: 'longMainPic',
+      title: '公告图片',
+      dataIndex: 'pic',
       hideInSearch: true,
       hideInForm: false,
-      render: text => <img alt="商品图片" style={{ width: 100, height: 50 }} src={text} />,
+      render: text => <img alt="公告图片" style={{ width: 100, height: 50 }} src={text} />,
     },
     {
-      title: '分类名称',
-      dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
+      title: '内容',
+      dataIndex: 'content',
+      hideInForm: true,
+      hideInSearch: false,
+    },
+    {
+      title: '公告类型',
+      dataIndex: 'type',
+      hideInForm: true,
+      hideInSearch: true,
+      valueEnum: {
+        0: {
+          text: '文字公告',
         },
-      ],
+        1: {
+          text: '图片公告',
+        },
+      },
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      hideInForm: true,
+      hideInSearch: true,
     },
     {
       title: '状态',
-      dataIndex: 'isShow',
+      dataIndex: 'state',
       hideInForm: false,
       hideInSearch: true,
       valueEnum: {
         0: {
-          text: '下架',
+          text: '隐藏',
           status: 'Default',
         },
         1: {
-          text: '上架',
+          text: '显示',
           status: 'Success',
         },
       },
@@ -136,6 +152,22 @@ const Product = (props) => {
         }
         return defaultRender(item);
       },
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'startDate',
+      sorter: true,
+      valueType: 'dateTime',
+      hideInSearch: true,
+      hideInForm: false,
+    },
+    {
+      title: '截止时间',
+      dataIndex: 'endDate',
+      sorter: true,
+      valueType: 'dateTime',
+      hideInSearch: true,
+      hideInForm: false,
     },
     {
       title: '操作',
@@ -161,13 +193,13 @@ const Product = (props) => {
       ),
     },
   ];
-  // 商品类型列表
+  // 公告列表
   const getProductList = (params) => {
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.banner.page',
+          'method': 'system.notice.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
@@ -192,7 +224,7 @@ const Product = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'productType.delete',
+          'method': 'system.notice.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
@@ -213,7 +245,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="公告分类表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -263,7 +295,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            个公告&nbsp;&nbsp;
           </div>
         )}
         request={params => getProductList(params)}

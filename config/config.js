@@ -57,7 +57,7 @@ export default defineConfig({
               ]
             },
             {
-              path: '/media',//公告管理
+              path: '/media',//媒体管理
               icon: 'user',
               name: 'media',
               "routes":[
