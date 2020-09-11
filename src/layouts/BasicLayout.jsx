@@ -74,7 +74,7 @@ const menuDataRender = menuList => {
       path: '/site',//网点管理
       name: 'site',
       "routes": [
-        { path: '/site/siteList', name: 'siteList', component: './site/siteList', }, //网点开通创建 
+        { path: '/site/siteList', name: 'siteList', component: './site/SiteList', }, //网点开通创建 
         { path: '/site/siteData', name: 'siteData', component: './site/siteData', }, //网点数据汇总 
       ]
     },

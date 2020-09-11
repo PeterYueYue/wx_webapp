@@ -74,6 +74,16 @@ export default defineConfig({
               ]
             },
             {
+              path: '/site',//网点管理
+              name: 'site',
+              "routes": [
+                { path: '/site/siteList', name: 'siteList', component: './site/siteList', }, //网点开通创建 
+                // { path: '/site/siteData', name: 'siteData', component: './site/SiteData', }, //网点数据汇总 
+              ]
+            },
+
+
+            {
               component: './404',
             },
           ],
