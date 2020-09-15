@@ -4,6 +4,7 @@ export default {
   'menu.code.codeManage': '二维码管理',
   'menu.area': '区域管理',
   'menu.area.areaList': '区域列表',
+  'menu.area.areaCommunity': '小区管理',
   'menu.area.areaSet': '门牌号列表',
   'menu.family': '家庭管理',
   'menu.family.familyList': ' 家庭列表',

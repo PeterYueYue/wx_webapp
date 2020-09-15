@@ -99,24 +99,12 @@ const UserList = (props) => {
       dataIndex: 'sendNumber',
     },
     {
-      title: '袋子免费领取数量',
-      dataIndex: 'bagGetNum',
-    },
-    {
-      title: '袋子购买数量',
-      dataIndex: 'bagPayNum',
-    },
-    {
       title: '获得总收益(rmb)',
       dataIndex: 'totalMoney',
     },
     {
       title: '剩余收益(rmb)',
       dataIndex: 'residueMoney',
-    },
-    {
-      title: '提现金额',
-      dataIndex: 'withdrawMoney',
     },
     {
       title: '状态',
@@ -176,7 +164,7 @@ const UserList = (props) => {
               handleModalVisible(record);
             }}
           >
-            补偿拾尚币
+            查看详情
           </a>
           {/* <Divider type="vertical" />
           <a  onClick={() => idelete(record)}>删除</a> */}
@@ -190,7 +178,7 @@ const UserList = (props) => {
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'user.page',
+          'method': 'system.user.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,

@@ -1,7 +1,7 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Input,Popconfirm,Switch, Ico } from 'antd';
+import { Button, Divider, Dropdown, Menu, message, Input, Popconfirm, Switch, Ico } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, connect,history} from 'umi';
+import { Link, connect, history } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import dataConversion from '@/utils/dataConversion.js'
@@ -10,7 +10,7 @@ import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import styles from './index.less'
 
-import {  updateRule, addRule, removeRule } from './service';
+import { updateRule, addRule, removeRule } from './service';
 
 /**
  * 添加节点
@@ -83,14 +83,14 @@ const Product = (props) => {
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
-  const [current,setCurrent] = useState('1')
+  const [current, setCurrent] = useState('1')
 
   useEffect(() => {
     let n = JSON.parse(localStorage.getItem("current"))
-    if(n >=1){
+    if (n >= 1) {
       setCurrent(n)
     }
-  },[])
+  }, [])
 
 
   const columns = [
@@ -98,10 +98,10 @@ const Product = (props) => {
       title: '商品图片',
       dataIndex: 'mainPic',
       valueType: 'textarea',
-      hideInSearch:true,
+      hideInSearch: true,
       hideInForm: false,
-      render:(item) => {
-        return <img alt="img" className={styles.productPic}    src={item}/>
+      render: (item) => {
+        return <img alt="img" className={styles.productPic} src={item} />
       }
 
     },
@@ -118,35 +118,20 @@ const Product = (props) => {
     {
       title: '商品描述',
       dataIndex: 'remark',
-      hideInSearch:true,
+      hideInSearch: true,
       valueType: 'textarea',
     },
     {
-      title: '商品信息',
-      hideInForm:false,
-      hideInSearch:true,
-      dataIndex: 'tag',
-      valueType: 'textarea',
-    },
-    {
-      title: '商品品牌',
-      hideInForm:false,
-      hideInSearch:true,
+      title: '  ',
+      hideInForm: false,
+      hideInSearch: true,
       dataIndex: 'supplierName',
       valueType: 'textarea',
     },
-    { 
+    {
       title: '商品价格(rmb)',
       dataIndex: 'price',
-      hideInSearch:true,
-      sorter: true,
-      hideInForm: false,
-      renderText: val => `${val}`,
-    },
-    { 
-      title: '商品价格(ssb)',
-      dataIndex: 'priceShishangBag',
-      hideInSearch:true,
+      hideInSearch: true,
       sorter: true,
       hideInForm: false,
       renderText: val => `${val}`,
@@ -154,15 +139,15 @@ const Product = (props) => {
     {
       title: '商品库存',
       dataIndex: 'stock',
-      hideInSearch:true,
-      hideInForm:false,
+      hideInSearch: true,
+      hideInForm: false,
       valueType: 'textarea',
     },
     {
       title: '商品销量',
       dataIndex: 'sold',
-      hideInSearch:true,
-      hideInForm:false,
+      hideInSearch: true,
+      hideInForm: false,
       valueType: 'textarea',
     },
     {
@@ -208,71 +193,75 @@ const Product = (props) => {
 
         <>
           <Link to={`/shop/productEdit?id=${record.id}`} >  编辑  </Link>
-          
+
           <Divider type="vertical" />
-          <Popconfirm title="确定删除此商品？" onConfirm={() => {confirm(record.id) } } onCancel={cancel}>
+          <Popconfirm title="确定删除此商品？" onConfirm={() => { confirm(record.id) }} onCancel={cancel}>
             <a href="#">删除</a>
           </Popconfirm>
         </>
       ),
     },
   ];
-  const  confirm =  async (id) =>{
+  const confirm = async (id) => {
     // message.success('点击了确定');
     await props.dispatch({
       type: 'shop/supportList',
-      payload: { ...dataConversion({
-        'method':'product.delete',
-        "biz_content":JSON.stringify({
-          "id":id,
+      payload: {
+        ...dataConversion({
+          'method': 'system.product.delete',
+          "biz_content": JSON.stringify({
+            "id": id,
+          })
         })
-      }) }
+      }
     })
 
     actionRef.current.reload();
 
 
-    
-  }
-  
-  function cancel() {
-    message.error('点击了取消');
-    
 
   }
-  function addProduct(){
+
+  function cancel() {
+    message.error('点击了取消');
+
+
+  }
+  function addProduct() {
     history.push("/shop/productEdit")
   }
   // 商品列表
   const getProductList = (params) => {
     let dateTime = ''
-    if(params.createDate){
-        dateTime =  new Date(params.createDate).valueOf();
+    if (params.createDate) {
+      dateTime = new Date(params.createDate).valueOf();
     }
     return props.dispatch({
-        type: 'shop/productListData',
-        payload: { ...dataConversion({
-          'method':'product.page',
-          "biz_content":JSON.stringify({
-            "startCreateDate":dateTime,
-            "endCreateDate":"",
-            "pageNumber":params.current,
-            "pageSize":params.pageSize,
-            "name":params.name,
-            "state":params.state
+      type: 'shop/productListData',
+      payload: {
+        ...dataConversion({
+          'method': 'system.product.page',
+          "biz_content": JSON.stringify({
+            "startCreateDate": dateTime,
+            "endCreateDate": "",
+            "pageNumber": params.current,
+            "pageSize": params.pageSize,
+            "name": params.name,
+            "state": params.state
           })
-        })}
+        })
+      }
     })
-}
+  }
   return (
     <PageHeaderWrapper>
       <ProTable
-        pagination={{ pageSize: 6 ,current:current}}
+        pagination={{ pageSize: 6, current: current }}
         headerTitle="查询表格"
         actionRef={actionRef}
         rowKey="key"
         onChange={(_, _filter, _sorter) => {
-          localStorage.setItem("current",_.current)
+          localStorage.setItem("current", _.current)
           const sorterResult = _sorter;
           if (sorterResult.field) {
             setSorter(`${sorterResult.field}_${sorterResult.order}`);
@@ -282,7 +271,7 @@ const Product = (props) => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => {addProduct()}} >
+          <Button type="primary" onClick={() => { addProduct() }} >
             <PlusOutlined /> 新建
           </Button>,
           selectedRows && selectedRows.length > 0 && (
@@ -321,7 +310,7 @@ const Product = (props) => {
             个商品&nbsp;&nbsp;
           </div>
         )}
-        request={ params => getProductList(params)}
+        request={params => getProductList(params)}
         columns={columns}
         rowSelection={{}}
       />

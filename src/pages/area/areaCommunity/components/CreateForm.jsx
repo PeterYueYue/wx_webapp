@@ -57,7 +57,7 @@ const CreateForm = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          "method": itemId ? "system.supervisor.update" : "system.supervisor.save",
+          "method": itemId ? "system.community.update" : "system.community.save",
           "biz_content": JSON.stringify({
             "id": itemId ? itemId : '',
             "name": values.name,
@@ -78,7 +78,10 @@ const CreateForm = (props) => {
       }
     })
   };
-
+  // const onChange = e => {
+  //   const v = e.target.value
+  //   console.log(v);
+  // };
 
   return (
     <Modal
@@ -94,7 +97,7 @@ const CreateForm = (props) => {
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
         <Form.Item name={['name']} label="督导员姓名" rules={[{ required: true }]}  >
-          <Input style={{ width: '300px' }} />
+          <Input style={{ width: '300px' }}  />
         </Form.Item>
         <Form.Item name={['mobile']} label="手机号" rules={[{ required: true }]}  >
           <Input style={{ width: '300px' }} />
