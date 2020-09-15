@@ -78,6 +78,7 @@ const Product = (props) => {
   const [sorter, setSorter] = useState('');
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [support, setSupport] = useState([])
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [list, setList] = useState([])
@@ -87,27 +88,35 @@ const Product = (props) => {
 
   const columns = [
     {
-      title: '轮播图',
-      dataIndex: 'picUrl',
+      title: '小区名称',
+      dataIndex: 'name',
+      rules: [
+        {
+          required: true,
+          message: '请输入',
+        },
+      ],
+    },
+    
+    {
+      title: '省',
+      dataIndex: 'province',
       hideInSearch: true,
-      hideInForm: false,
-      render: text => <img alt="轮播图片" style={{ width: 100, height: 50 }} src={text} />,
     },
     {
-      title: '状态',
-      dataIndex: 'bannerFlag',
-      hideInForm: false,
+      title: '市',
+      dataIndex: 'city',
       hideInSearch: true,
-      valueEnum: {
-        0: {
-          text: '隐藏',
-          status: 'Default',
-        },
-        1: {
-          text: '显示',
-          status: 'Success',
-        },
-      },
+    },
+    {
+      title: '区',
+      dataIndex: 'zone',
+      hideInSearch: true,
+    },
+    {
+      title: '街道',
+      dataIndex: 'street',
+      hideInSearch: true,
     },
     {
       title: '创建时间',
@@ -157,7 +166,7 @@ const Product = (props) => {
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.banner.page',
+          'method': 'system.community.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
@@ -182,7 +191,7 @@ const Product = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'system.banner.delete',
+          'method': 'system.community.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
@@ -203,7 +212,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="列表"
+        headerTitle="商品分类表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -253,7 +262,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个轮播&nbsp;&nbsp;
+            个商品&nbsp;&nbsp;
           </div>
         )}
         request={params => getProductList(params)}

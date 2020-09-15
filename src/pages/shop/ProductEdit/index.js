@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Row, Col, Select, Checkbox, message, Switch } from "antd"
 import { PageHeaderWrapper } from "@ant-design/pro-layout";
 import dataConversion from '@/utils/dataConversion.js'
-import UploadImg from "./components/Upload"
+import UploadImg from "./../../shop/ProductEdit/components/Upload"
 import { history } from 'umi';
 import { connect } from 'umi';
 import style from "./index.less"
@@ -17,7 +17,6 @@ const ProductEdit = (props) => {
     const [state, setState] = useState(false)
     const [productType, setProductType] = useState([])
     const [supplier, setSupplier] = useState([])
-    const [goodType, setGoodType] = useState([])
     const [itemId] = useState(history.location.query.id ? history.location.query.id : "")
     const layout = {
         labelCol: { span: 2 },
@@ -26,60 +25,35 @@ const ProductEdit = (props) => {
 
 
     useEffect(() => {
-        supportList()
-        productTypeList()
+        // supportList()
+        // productTypeList()
         supplierList()
         if (itemId) {
             getDetail(itemId)
         }
 
     }, []);
-    // 支持列表
-    const supportList = () => {
-        props.dispatch({
-            type: 'shop/supportList',
-            payload: {
-                ...dataConversion({
-                    'method': 'support.list'
-                })
-            }
-        }).then((res) => {
-            setSupport(res.result)
-        })
-    }
-    // 商品类型
-    const productTypeList = () => {
-        props.dispatch({
-            type: 'shop/supportList',
-            payload: {
-                ...dataConversion({
-                    'method': 'productType.list'
-                })
-            }
-        }).then((res) => {
-            setProductType(res.result)
-        })
-    }
     // 供应商
     const supplierList = () => {
         props.dispatch({
             type: 'shop/supportList',
             payload: {
                 ...dataConversion({
-                    'method': 'supplier.list'
+                    'method': 'system.supplier.page'
                 })
             }
         }).then((res) => {
-            setSupplier(res.result)
+            console.log(res)
+            setSupplier(res.result.content)
         })
-    }
+    }   
     // 查看详情
     const getDetail = (id) => {
         props.dispatch({
             type: 'shop/supportList',
             payload: {
                 ...dataConversion({
-                    'method': 'product.get',
+                    'method': 'system.product.get',
                     'biz_content': JSON.stringify({
                         "id": id,
                         "priceShishangBag": 0
@@ -98,7 +72,7 @@ const ProductEdit = (props) => {
                 marketPrice: res.result.marketPrice,
                 stock: res.result.stock,
                 tag: res.result.tag,
-                supportIds: res.result.supports.map(e => e.id),
+                // supportIds: res.result.supports.map(e => e.id),
                 supplier: res.result.supplier,
                 supplierId: res.result.supplierId,
                 sn: res.result.sn,
@@ -106,7 +80,6 @@ const ProductEdit = (props) => {
                 goodType: res.result.productType,
                 useInstructions: res.result.useInstructions,
             })
-            setGoodType(res.result.productType)
             setState(res.result.state == 1 ? false : true)
 
         })
@@ -114,30 +87,31 @@ const ProductEdit = (props) => {
 
     // 编辑时图片处理
     const editImg = (result) => {
+        console.log(result);
         let fileList1 = [{
             uid: result.id,
             name: "商品主图",
             status: 'done',
-            url: result.longMainPic,
-            response: { shortImgUrl: result.mainPic }
-        }]
-        let fileList2 = result.productThumbList.map((e) => {
+            url: result.mainPic,
+            response: { imgUrl: result.mainPic }
+        }] 
+        let fileList2 = result.thumbList.map((e) => {
             let obj = {
                 uid: e.id,
                 name: "轮播图片",
                 status: 'done',
-                url: e.longPic,
-                response: { shortImgUrl: e.pic }
+                url: e.pic,
+                response: { imgUrl: e.pic }
             }
             return obj
         });
         let fileList3 = result.descPics.map((e) => {
             let obj = {
-                uid: e.shortPic,
+                uid: e,
                 name: "详情图片",
                 status: 'done',
-                url: e.longPic,
-                response: { shortImgUrl: e.shortPic }
+                url: e,
+                response: { imgUrl: e }
             }
             return obj
 
@@ -176,32 +150,18 @@ const ProductEdit = (props) => {
         setFileList3(fileList)
     };
 
-    const goods = [
-        {
-            id: 0,
-            name: "实物"
-        },
-        {
-            id: 1,
-            name: "电子券"
-        },
-    ]
-    const changeGood = value => {
-        console.log(value);
-        setGoodType(value)
-    }
     const onFinish = values => {
         let mainPic = '';
         let pics = [];
         let description = '';
         if (fileList1.length > 0 && fileList2.length > 0) {
-            mainPic = fileList1[0].response.shortImgUrl;
+            mainPic = fileList1[0].response.imgUrl;
 
             fileList2.map((item, index) => {
-                pics.push(item.response.shortImgUrl)
+                pics.push(item.response.imgUrl)
             })
             if (fileList3.length > 0) {
-                fileList3.map((item, index) => { description += item.response.shortImgUrl + ',' })
+                fileList3.map((item, index) => { description += item.response.imgUrl + ',' })
             }
         } else {
             message.warning('请添加图片');
@@ -212,7 +172,7 @@ const ProductEdit = (props) => {
             type: 'shop/supportList',
             payload: {
                 ...dataConversion({
-                    "method": itemId ? "product.update" : "product.save",
+                    "method": itemId ? "system.product.update" : "system.product.save",
                     "biz_content": JSON.stringify({
                         "id": itemId,
                         "cashPrice": values.cashPrice,
@@ -263,31 +223,6 @@ const ProductEdit = (props) => {
                         <Form.Item name={['name']} label="商品名称" rules={[{ required: true }]}>
                             <Input style={{ width: '300px' }} />
                         </Form.Item>
-                        <Form.Item name="goodType" label="商品类型 " rules={[{ required: true }]} >
-                            <Select
-                                placeholder="请选择商品类型"
-                                allowClear
-                                style={{ width: '300px' }}
-                                onChange={changeGood}
-                            >
-                                {goods.map((item) => {
-                                    return <Option key={item.id} value={item.id}>{item.name}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        {
-                            goodType == 1 ?
-                                <Form.Item name="sn" label="商品编号 " rules={[{ required: true }]} col={14}>
-                                    <Input name="sn" placeholder="填写商品编号" style={{ width: '300px' }} rules={[{ required: true }]} />
-                                </Form.Item>
-                                : ""
-                        }
-                        {goodType == 1 ?
-                            <Form.Item name="useInstructions" label="使用说明" rules={[{ required: true }]} col={14}>
-                                <TextArea name="useInstructions" placeholder="使用说明" style={{ width: '300px' }} rules={[{ required: true }]} rows={4} />
-                            </Form.Item>
-                            : ""
-                        }
                         <Form.Item className={style.formItem1} name={['mainPic']} label="商品主图" rules={[{ required: false }]}>
                             <Row>
                                 <Col className={style.uploadBox} span={4}>
@@ -301,17 +236,6 @@ const ProductEdit = (props) => {
                         </Form.Item>
                         <Form.Item className={style.formItem1} name={['pics']} label="详情图片" rules={[{ required: false }]}>
                             <UploadImg length={6} onChange={handleChange3} fileList={fileList3} />
-                        </Form.Item>
-                        <Form.Item name="typeId" label="商品分类" rules={[{ required: true }]}>
-                            <Select
-                                placeholder="请选择商品类型"
-                                allowClear
-                                style={{ width: '300px' }}
-                            >
-                                {productType.map((item) => {
-                                    return <Option key={item.id} value={item.id}>{item.name}</Option>
-                                })}
-                            </Select>
                         </Form.Item>
                         <Form.Item name="supplierId" label="商家选择 " rules={[{ required: true }]}>
                             <Select
@@ -329,18 +253,6 @@ const ProductEdit = (props) => {
                         </Form.Item>
                         <Form.Item name={['marketPrice']} label="商品售价" rules={[{ required: true }]} >
                             <Input style={{ width: '100px' }} />
-                        </Form.Item>
-                        <Form.Item name={['tag']} label="商品标签" rules={[{ required: false }]} >
-                            <Input maxLength={4} style={{ width: '100px' }} />
-                        </Form.Item>
-                        <Form.Item name="supportIds" label="商品支持" rules={[{ required: true }]} >
-                            <Checkbox.Group style={{ width: '800px' }} >
-                                <Row>
-                                    {support.map((item) => {
-                                        return <Col key={item.id} span={8}> <Checkbox value={item.id} style={{ lineHeight: '32px', }}> {item.name} </Checkbox> </Col>
-                                    })}
-                                </Row>
-                            </Checkbox.Group>
                         </Form.Item>
                         <Form.Item name={['remark']} label="商品简介" rules={[{ required: false }]}>
                             <Input style={{ width: '300px' }} />

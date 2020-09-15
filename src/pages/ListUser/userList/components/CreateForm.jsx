@@ -32,27 +32,30 @@ const CreateForm = (props) => {
   }, [props.modalVisible.id]);
 
   const onFinish = values => {
-    props.dispatch({
-      type: 'productSort/productEdit',
-      payload: {
-        ...dataConversion({
-          "method": itemId?"user.addEarnings":"user.addEarnings",
-          "biz_content": JSON.stringify({
-            "userId":itemId?itemId:'',
-            "amount": values.amount,
-          })
-        })
-      }
-    }).then((res) => {
-      if (res.code == 10000) {
-        message.success('提交成功');
-        props.onCancel();
-        props.reload();
-        form.resetFields()
-      } else {
-        message.error(res.msg);
-      }
-    })
+    props.onCancel();
+    props.reload();
+    form.resetFields()
+    // props.dispatch({
+    //   type: 'productSort/productEdit',
+    //   payload: {
+    //     ...dataConversion({
+    //       "method": itemId?"user.addEarnings":"user.addEarnings",
+    //       "biz_content": JSON.stringify({
+    //         "userId":itemId?itemId:'',
+    //         "amount": values.amount,
+    //       })
+    //     })
+    //   }
+    // }).then((res) => {
+    //   if (res.code == 10000) {
+    //     message.success('提交成功');
+    //     props.onCancel();
+    //     props.reload();
+    //     form.resetFields()
+    //   } else {
+    //     message.error(res.msg);
+    //   }
+    // })
 
   };
 

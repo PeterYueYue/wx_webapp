@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Row, Col, Button, Divider, Dropdown, Menu, message, Input, Tabs, Modal, Radio, Alert } from 'antd';
-import UploadImg from "./../../../shop/ProductEdit/components/Upload"
+import { Form, Row, Col, Button, Divider, Dropdown, Select, message, Input, Tabs, Modal, Radio, Alert } from 'antd';
 import dataConversion from '@/utils/dataConversion.js'
 import { connect } from 'umi';
 import style from "./../index.less"
@@ -24,75 +23,71 @@ const CreateForm = (props) => {
   const [form] = Form.useForm();
   const [fileList1, setFileList1] = useState([])
   const [itemId, setItemId] = useState();
-  const handleChange1 = (fileList) => {
-    setFileList1(fileList)
-  };
-  const onChange = (() => {
-    
-  })
+  const [site, setSite] = useState([])
   useEffect(() => {
     if (props.modalVisible.id) {//设置编辑
       setItemId(props.modalVisible.id);
-      editImg(props.modalVisible);
       form.setFieldsValue(props.modalVisible);
-    }else{
+      console.log(props.modalVisible)
+      // setSite(props.modalVisible.site)
+    } else {
       form.resetFields();
       const fileList1 = '';
       setFileList1(fileList1)
+      siteList()
     }
   }, [props.modalVisible.id]);
 
-  const editImg = (result) => {
-    let fileList1 = [{
-      uid: result.id,
-      name: "轮播图",
-      status: 'done',
-      url: result.picUrl,
-      response:{imgUrl:result.picUrl}
-    }]
-    setFileList1(fileList1)
+
+  // 网点列表
+  const siteList = () => {
+    props.dispatch({
+      type: 'productSort/productList',
+      payload: {
+        ...dataConversion({
+          'method': 'system.site.page'
+        })
+      }
+    }).then((res) => {
+      setSite(res.data)
+    })
   }
   const onFinish = values => {
-    let mainPic = '';
-    if (fileList1.length > 0) {
-      mainPic = fileList1[0].response.imgUrl;
-    } else {
-      message.warning('请添加图片');
-    }
     props.dispatch({
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          "method": itemId?"system.banner.update":"system.banner.save",
+          "method": itemId ? "system.community.update" : "system.community.save",
           "biz_content": JSON.stringify({
-            "id":itemId?itemId:'',
+            "id": itemId ? itemId : '',
             "name": values.name,
-            "picUrl": mainPic,
-            "bannerFlag": values.bannerFlag,
+            "mobile": values.mobile,
+            "siteId": values.site,
+            "sex": values.sex,
           })
         })
       }
     }).then((res) => {
       if (res.code == 10000) {
-        mainPic = '';
         message.success('提交成功');
         props.onCancel();
         props.reload();
         form.resetFields()
-        const fileList1 = '';
-        setFileList1(fileList1)
       } else {
         message.error(res.msg);
       }
     })
   };
-
+  // const onChange = e => {
+  //   const v = e.target.value
+  //   console.log(v);
+  // };
 
   return (
     <Modal
       // destroyOnClose
       getContainer={false}
-      title="新建"
+      title="商品分类"
       visible={modalVisible}
       onOk={() => onFinish()}
       onCancel={() => props.onCancel()}
@@ -101,25 +96,40 @@ const CreateForm = (props) => {
     >
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name={['bannerFlag']} label="状态" rules={[{ required: true }]}>
+        <Form.Item name={['name']} label="督导员姓名" rules={[{ required: true }]}  >
+          <Input style={{ width: '300px' }}  />
+        </Form.Item>
+        <Form.Item name={['mobile']} label="手机号" rules={[{ required: true }]}  >
+          <Input style={{ width: '300px' }} />
+        </Form.Item>
+        <Form.Item name={['sex']} label="性别" rules={[{ required: true }]}  >
+          <Select
+            placeholder="请选择性别"
+            allowClear
+            style={{ width: '300px' }}
+          >
+            <Option value={"男"}>男</Option>
+            <Option value={"女"}>女</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item name={['site']} label="关联网点" rules={[{ required: false }]}>
+          <Select
+            placeholder="请选择网点"
+            allowClear
+            style={{ width: '300px' }}
+          >
+            {site.map((item) => {
+              return <Option key={item.id} value={item.id}>{item.name}</Option>
+            })}
+          </Select>
+        </Form.Item>
+
+        {/* <Form.Item name={['isShow']} label="状态" rules={[{ required: true }]}>
           <Radio.Group onChange={onChange} value={0}>
             <Radio value={1}>显示</Radio>
             <Radio value={0}>隐藏</Radio>
           </Radio.Group>
-        </Form.Item>
-        <Form.Item className={style.formItem1} name={['picUrl']} label="轮播图" rules={[{ required: true }]}>
-          <Col className={style.uploadBox} span={3}>
-            <UploadImg length={1} onChange={handleChange1} fileList={fileList1} />
-          </Col>
-        </Form.Item>
-        <Form.Item className={style.formItem1} wrapperCol={{ offset: 5 }}>
-          <Col className={style.uploadBox} span={19}>
-            <Alert
-              message="建议尺寸: 700*280像素,最多上传1张"
-              type="info"
-            />
-          </Col>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
             确定

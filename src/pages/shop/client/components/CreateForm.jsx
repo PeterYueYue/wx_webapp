@@ -40,7 +40,7 @@ const CreateForm = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          "method": itemId?"supplier.update":"supplier.save",
+          "method": itemId?"system.supplier.update":"system.supplier.save",
           "biz_content": JSON.stringify({
             "id":itemId?itemId:'',
             "name": values.name,

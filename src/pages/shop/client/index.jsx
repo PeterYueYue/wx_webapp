@@ -95,7 +95,7 @@ const Client = (props) => {
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'supplier.page',
+          'method': 'system.supplier.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
@@ -121,7 +121,7 @@ const Client = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'supplier.delete',
+          'method': 'system.supplier.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })

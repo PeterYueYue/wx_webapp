@@ -45,6 +45,7 @@ const menuDataRender = menuList => {
       name: 'area',
       "routes": [
         { path: '/area/areaList', name: 'areaList', component: './area/areaList', }, //设置区域 
+        { path: '/area/areaCommunity', name: 'areaCommunity', component: './area/areaCommunity', }, //小区管理  
         { path: '/area/areaSet', name: 'areaSet', component: './area/areaSet', }, //设置门牌号  
       ]
     },
@@ -92,12 +93,12 @@ const menuDataRender = menuList => {
       "routes": [
         { path: '/shop/product', name: 'product', component: './shop/Product', }, //商品列表 
         { path: '/shop/productEdit', name: 'productEdit', component: './shop/productEdit', hideInMenu: true, },    //商品新增-商品编辑
-        { path: '/shop/productOrder', name: 'productOrder', component: './shop/productOrder', },  //订单管理
-        { path: '/shop/orderDetails', name: 'orderDetails', component: './shop/OrderDetails', hideInMenu: true, },   //订单详情
-        { path: '/shop/protectRights', name: 'protectRights', component: './shop/ProtectRights', },  //维权订单管理
-        { path: '/shop/protectRightsDetails', name: 'protectRightsDetails', component: './shop/ProtectRightsDetails', hideInMenu: true, },   //维权订单详情
-        { path: '/shop/productSort', name: 'productSort', component: './shop/productSort', }, //商品分类
-        { path: '/shop/productSupport', name: 'productSupport', component: './shop/productSupport', }, //商品支持
+        // { path: '/shop/productOrder', name: 'productOrder', component: './shop/productOrder', },  //订单管理
+        // { path: '/shop/orderDetails', name: 'orderDetails', component: './shop/OrderDetails', hideInMenu: true, },   //订单详情
+        // { path: '/shop/protectRights', name: 'protectRights', component: './shop/ProtectRights', },  //维权订单管理
+        // { path: '/shop/protectRightsDetails', name: 'protectRightsDetails', component: './shop/ProtectRightsDetails', hideInMenu: true, },   //维权订单详情
+        // { path: '/shop/productSort', name: 'productSort', component: './shop/productSort', }, //商品分类
+        // { path: '/shop/productSupport', name: 'productSupport', component: './shop/productSupport', }, //商品支持
         { path: '/shop/client', name: 'client', component: './shop/client', }, //品牌客户
       ]
     },
