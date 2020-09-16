@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { DownOutlined, PlusOutlined, BlockOutlined } from '@ant-design/icons';
-import {Form, Row,Col,Button, Table, Tag, Space, message, Input, Card  ,Modal,Select  } from 'antd';
+import { QuestionCircleOutlined, PlusOutlined, BlockOutlined } from '@ant-design/icons';
+import {Form, Row,Col,Button, Table, Tag, Space, message, Input, Card  ,Modal,Select,Popconfirm  } from 'antd';
 const { Option } = Select;
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 
@@ -59,9 +59,29 @@ const SiteList = (props) => {
       
     },
     {
+      title: '所属省份',
+      dataIndex: 'province',
+      key: 'province',
+    },
+    {
       title: '所属城市',
       dataIndex: 'city',
       key: 'city',
+    },
+    {
+      title:'行政区',
+      dataIndex:'zone',
+      key:'zone'
+    },
+    {
+      title:'街道',
+      dataIndex:'street',
+      key:'street'
+    },
+    {
+      title:'小区名称',
+      dataIndex:'community',
+      key:'community'
     },
     {
       title: '详细地址',
@@ -86,7 +106,9 @@ const SiteList = (props) => {
           }} 
             
           >编辑网点信息</a>
-          <a>删除网点</a>
+          <Popconfirm title="确定删除网点吗？" onConfirm={() => deleteItem(record.id)} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+          <a  >删除网点</a>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -220,7 +242,7 @@ const SiteList = (props) => {
       type: 'site/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.site.page',
+          'method':'system.site.page',
           "biz_content": JSON.stringify({
             "pageNumber":page?page:current,
             "pageSize": pageSize,
@@ -230,7 +252,8 @@ const SiteList = (props) => {
             "street": streetItem?streetItem.areaName:'',
             "communityId": communityItem?communityItem.areaName:'',
             "linkMan":linkManName,
-            "name":siteValue
+            "name":siteValue,
+            
           })
         })
       }
@@ -240,37 +263,25 @@ const SiteList = (props) => {
       setCurrent(res.current)
     })
   }
-  //删除
-  const idelete = (currentItem) => {
-    console.log(currentItem);
-    Modal.confirm({
-      title: '删除任务',
-      content: '确定删除该任务吗？',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => deleteItem(currentItem.id),
-    });
-  };
+  
   const deleteItem= (id) => {
     return props.dispatch({
-      type: 'productSort/productEdit',
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'productType.delete',
+          'method':'system.site.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
         })
       }
     }).then((res) => { 
-      actionRef.current.reload();
+      reload();
     })
   }
   const reload = ()=> {
     getProductList()
   }
-  
- 
   // 打开新建组件
   function openModalVisible(){
     handleModalVisible(true)
@@ -279,7 +290,7 @@ const SiteList = (props) => {
   function siteName(val) {
     console.log(val)
   }
-  
+ 
   // 分页处理
   const pagination = {
     current:current,
@@ -356,7 +367,7 @@ const SiteList = (props) => {
             <Button>重置</Button>
           </div>
         </Card>
-      <Table pagination={pagination} className={style.table} bordered={true} columns={columns} dataSource={list} />
+      <Table pagination={pagination}  className={style.table} bordered={true} columns={columns} dataSource={list} />
       <CreateForm 
         onCancel={() =>{handleModalVisible(false)}} modalVisible={createModalVisible}
         siteItem={siteItem}
