@@ -290,12 +290,18 @@ const SiteList = (props) => {
   function siteName(val) {
     console.log(val)
   }
+  function clearForm() {
+    form.resetFields();
+    setSiteValue("");
+    setLinkManName("");
+  }
  
   // 分页处理
   const pagination = {
     current:current,
     pageSize:pageSize,
     total:total,
+    showTotal: () => `共${total}条`,
     onChange:(page, pageSize) => {
       setCurrent(page)
       getProductList(page)
@@ -306,65 +312,73 @@ const SiteList = (props) => {
   return (
     <PageHeaderWrapper>
        <Card  bordered={true} style={{ width: "100%" }}>
-          <Row className={style.row}>
-            <Col className={style.inputItem} span={8}>
-              <span>省份选择：</span>
-              <Select  showSearch style={{ width: 200 }} placeholder="请选择" onChange={onChange_province} >
-                {provinceList.map((e,i) =>  {
-                    return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
-                })}e.id
-              </Select>
-            </Col>
-            <Col span={8}>
-              <span>城市选择：</span>
-              <Select showSearch style={{ width: 200 }}  placeholder="请选择" onChange={onChange_citys} >
-                {cityList.map((e,i) =>  {
-                    return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
-                })}
-              </Select>
+          <Form form={form} name="nest-messages"  >
+            <Row className={style.row}>
+              <Col className={style.inputItem} span={8}>
+              <Form.Item name={['province']}  label="省份选择"  >
+                <Select    style={{ width: 200 }}  placeholder="请选择" onChange={onChange_province} >
+                  {provinceList.map((e,i) =>  {
+                      return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
+                  })}
+                </Select>
+              </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item  name={['city']} label="城市选择"  >
+                  <Select  style={{ width: 200 }}  placeholder="请选择" onChange={onChange_citys} >
+                    {cityList.map((e,i) =>  {
+                        return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item  name={['administrativeDistrict']} label="区/县选择"  >
+                  <Select  style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_administrativeDistrict} >
+                    {administrativeDistrict.map((e,i) =>  {
+                        return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row className={style.row}>
+              <Col span={8}>
+                <Form.Item  name={['street']} label="街道选择"  >
+                  <Select  style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_street} >
+                    {street.map((e,i) =>  {
+                        return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item  name={['community']} label="小区选择"  >
+                  <Select  style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_community} >
+                    {community.map((e,i) =>  {
+                        return(<Option key={i} item={e} value={e.id}>{e.name}</Option>) 
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>  
+              <Col span={8}>
+                <span>网点名称：</span>
+                <Input style={{ width: 200 }} value={siteValue}  onChange={(e) => {setSiteValue(e.target.value)} }  placeholder="请输入" />
+              </Col>    
+            </Row>
+            <Row className={style.row}>
+              <Col span={8}>
+                <span>负责人员：</span>
+                <Input style={{ width: 200 }} value={linkManName}  onChange={(e) => {setLinkManName(e.target.value)} }  placeholder="请输入" />
+              </Col>    
+            </Row>
 
-            </Col>
-            <Col span={8}>
-            <span>区/县选择：</span>
-              <Select showSearch style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_administrativeDistrict} >
-                {administrativeDistrict.map((e,i) =>  {
-                    return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
-                })}
-              </Select>
-            </Col>
-          </Row>
-          <Row className={style.row}>
-            <Col span={8}>
-              <span>街道选择：</span>
-              <Select showSearch style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_street} >
-                {street.map((e,i) =>  {
-                    return(<Option key={i} item={e} value={e.id}>{e.areaName}</Option>) 
-                })}
-              </Select>
-            </Col>
-            <Col span={8}>
-              <span>小区选择：</span>
-              <Select showSearch style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_community} >
-                {community.map((e,i) =>  {
-                    return(<Option key={i} item={e} value={e.id}>{e.name}</Option>) 
-                })}
-              </Select>
-            </Col>  
-            <Col span={8}>
-              <span>网点名称：</span>
-              <Input style={{ width: 200 }} value={siteValue}  onChange={(e) => {setSiteValue(e.target.value)} }  placeholder="请输入" />
-            </Col>    
-          </Row>
-          <Row className={style.row}>
-            <Col span={8}>
-              <span>负责人员：</span>
-              <Input style={{ width: 200 }} value={linkManName}  onChange={(e) => {setLinkManName(e.target.value)} }  placeholder="请输入" />
-            </Col>    
-          </Row>
+          </Form>
+          
           <div className={style.searBtnBox}>
             <Button className={style.search} onClick={search} type="primary">查询</Button>
             <Button onClick={openModalVisible} className={style.search} type="primary">新建</Button>
-            <Button>重置</Button>
+            <Button onClick={clearForm}>重置</Button>
           </div>
         </Card>
       <Table pagination={pagination}  className={style.table} bordered={true} columns={columns} dataSource={list} />
