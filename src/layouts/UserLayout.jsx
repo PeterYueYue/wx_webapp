@@ -42,7 +42,7 @@ const UserLayout = props => {
           <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
-                <img alt="logo" className={styles.logo} src="http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png" />
+                {/* <img alt="logo" className={styles.logo} src="http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png" /> */}
                 <span className={styles.title}>无锡易腐垃圾平台</span>
               </Link>
             </div>

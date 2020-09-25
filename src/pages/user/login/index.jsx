@@ -28,33 +28,42 @@ const Login = props => {
   const { status, type: loginType } = userLogin;
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState('account');
-  const [codeKey, setCodeKey] = useState(new Date().getTime().toString() + Math.floor(Math.random()*100000));
+  const [codeKey, setCodeKey] = useState(new Date().getTime().toString() + Math.floor(Math.random() * 100000));
 
   // 登录
   const handleSubmit = values => {
-    if(!values){
+    if (!values) {
       return
     }
 
     props.dispatch({
       type: 'login/login',
-      payload: { ...dataConversion({
-        'method':'admin.login',  
-        'biz_content':JSON.stringify({
-          "codeKey" :  codeKey,
-          "password":  values.password,
-          "vCode"   :  values.vCode,
-          "username":  values.userName
+      payload: {
+        ...dataConversion({
+          'method': 'system.admin.login',
+          "biz_content": JSON.stringify({
+              "username": values.userName,
+              "password": values.password,
+          })
         })
-      }), type },
+      }
+      // payload: {
+      //   ...dataConversion({
+      //     'method': 'system.admin.login',
+      //     'biz_content': JSON.stringify({
+      //       // "codeKey" :  codeKey,
+      //       // "vCode"   :  values.vCode,
+      //       "username": values.userName,
+      //       "password": values.password,
+      //     })
+      //   })
+      // },
     });
   };
 
-
-
   // 更新验证码
-   const  getCodeKey =  () => {
-    setCodeKey(new Date().getTime().toString() + Math.floor(Math.random()*100000))
+  const getCodeKey = () => {
+    setCodeKey(new Date().getTime().toString() + Math.floor(Math.random() * 100000))
   }
 
   return (
@@ -85,7 +94,7 @@ const Login = props => {
               },
             ]}
           />
-          <Captcha
+          {/* <Captcha
             name="vCode"
             placeholder="验证码"
             countDown={120}
@@ -99,64 +108,14 @@ const Login = props => {
                 message: '请输入验证码！',
               },
             ]}
-          />
+          /> */}
         </Tab>
-        {/* <Tab key="mobile" tab="手机号登录">
-          {status === 'error' && loginType === 'mobile' && !submitting && (
-            <LoginMessage content="验证码错误" />
-          )}
-          <Mobile
-            name="mobile"
-            placeholder="手机号"
-            rules={[
-              {
-                required: true,
-                message: '请输入手机号！',
-              },
-              {
-                pattern: /^1\d{10}$/,
-                message: '手机号格式错误！',
-              },
-            ]}
-          />
-          <Captcha
-            name="captcha"
-            placeholder="验证码"
-            countDown={120}
-            getCaptchaButtonText=""
-            getCaptchaSecondText="秒"
-            rules={[
-              {
-                required: true,
-                message: '请输入验证码！',
-              },
-            ]}
-            
-          />
-        </Tab> */}
-        
         <div>
           <Checkbox checked={autoLogin} onChange={e => setAutoLogin(e.target.checked)}>
             自动登录
           </Checkbox>
-          {/* <a
-            style={{
-              float: 'right',
-            }}
-          >
-            忘记密码
-          </a> */}
         </div>
         <Submit loading={submitting}>登录</Submit>
-        {/* <div className={styles.other}>
-          其他登录方式
-          <AlipayCircleOutlined className={styles.icon} />
-          <TaobaoCircleOutlined className={styles.icon} />
-          <WeiboCircleOutlined className={styles.icon} />
-          <Link className={styles.register} to="/user/register">
-            注册账户
-          </Link>
-        </div> */}
       </LoginForm>
     </div>
   );

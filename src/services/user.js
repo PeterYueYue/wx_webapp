@@ -10,7 +10,7 @@ export async function queryCurrent() {
   if(user){
     data = {
       name: '无小锡',
-      avatar: 'http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png',
+      avatar: 'https://gw.alipayobjects.com/zos/antfincdn/PmY%24TNNDBI/logo.svg',
       userid: '00000001',
       email: 'antdesign@alipay.com',
     }

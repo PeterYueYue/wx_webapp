@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, message, Input, Modal, Select } from 'antd';
+import { Form, Button, message, Input, Modal, Select,  Upload, } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import api from './../../../../services/api';
 const { Option } = Select;
 import dataConversion from '@/utils/dataConversion.js'
 import { connect } from 'umi';
@@ -19,6 +21,7 @@ const validateMessages = {
     range: '${label} must be between ${min} and ${max}',
   },
 };
+
 const CreateForm = (props) => {
   const { modalVisible, onCancel } = props;
   const [form] = Form.useForm();
@@ -29,12 +32,10 @@ const CreateForm = (props) => {
   const [cityList_a, setCityList_a] = useState([])
   const [administrativeDistrict_a, setAdminstrativeDistrict_a] = useState([])
   const [street_a, setStreet_a] = useState([])
-  // const [community_a, setCommunity_a] = useState([])
-
 
 
   useEffect(() => {
-    // console.log(props)
+    console.log(props.modalVisible.id)
     if (props.modalVisible.id) {//设置编辑
       setItemId(props.modalVisible.id);
       getSiteInfo(props.modalVisible.id)
@@ -45,18 +46,17 @@ const CreateForm = (props) => {
     getProvince()
   }, [props.modalVisible.id]);
 
-  // 获取网点详情
+  // 获取详情
   const getSiteInfo = (id) => {
     props.dispatch({
       type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.site.get',
+          'method': 'system.community.get',
           "biz_content": JSON.stringify({ "id": id })
         })
       }
     }).then(res => {
-      console.log(res.result, "网点详情")
       form.setFieldsValue(res.result);
       editGetList(res.result)
     })
@@ -69,12 +69,10 @@ const CreateForm = (props) => {
     getCitys(item.provinceId)
     getAdministrativeDistrict(item.cityId)
     getStreet(item.zoneId)
-    getCommunity(item.streetId)
   }
 
   // 获取省份列表数据
   const getProvince = () => {
-
     props.dispatch({
       type: 'site/getlist',
       payload: {
@@ -84,16 +82,13 @@ const CreateForm = (props) => {
         })
       }
     }).then(res => {
-      console.log(res.result, "省份列表11")
       let arr = res.result
       setProvinceList_a(arr)
-
     })
 
   }
   // 根据省份Id获取城市列表数据
   const getCitys = (id) => {
-
     props.dispatch({
       type: 'site/getlist',
       payload: {
@@ -104,8 +99,6 @@ const CreateForm = (props) => {
       }
     }).then(res => {
       setCityList_a(res.result)
-
-      console.log(res, "城市列表")
     })
 
   }
@@ -122,14 +115,11 @@ const CreateForm = (props) => {
       }
     }).then(res => {
       setAdminstrativeDistrict_a(res.result)
-
-      console.log(res, "行政区列表")
     })
 
   }
   // 根据行政区ID获取街道列表数据
   const getStreet = (id) => {
-
     props.dispatch({
       type: 'site/getlist',
       payload: {
@@ -140,25 +130,8 @@ const CreateForm = (props) => {
       }
     }).then(res => {
       setStreet_a(res.result)
-
-      console.log(res, "街道列表")
     })
 
-  }
-  // 根据街道ID获取小区列表数据
-  const getCommunity = (id) => {
-    props.dispatch({
-      type: 'site/getlist',
-      payload: {
-        ...dataConversion({
-          'method': 'system.community.getByStreetId',
-          "biz_content": JSON.stringify({ "id": id })
-        })
-      }
-    }).then(res => {
-      // setCommunity_a(res.result)
-      console.log(res, "小区列表")
-    })
   }
 
 
@@ -168,7 +141,7 @@ const CreateForm = (props) => {
       city: '',
       zone: '',
       street: '',
-      communityId: '',
+      streetId: '',
     });
   }
   const onChange_citys = value => {
@@ -176,7 +149,7 @@ const CreateForm = (props) => {
     form.setFieldsValue({
       zone: '',
       street: '',
-      communityId: '',
+      streetId: '',
     });
   }
 
@@ -184,16 +157,12 @@ const CreateForm = (props) => {
     getStreet(value)  // 下拉选取区
     form.setFieldsValue({
       street: '',
-      communityId: '',
+      streetId: '',
     });
   }
   const onChange_street = value => {
-    getCommunity(value) // 下拉选取街道
-    form.setFieldsValue({
-      communityId: '',
-    });
+    // getCommunity(value) // 下拉选取街道
   }
-  const onChange_community = value => { }
 
 
 
@@ -202,14 +171,11 @@ const CreateForm = (props) => {
 
   // 提交订单
   const onFinish = values => {
-    console.log(values);
-    // return;
+    console.log(values)
     let data = values;
-    data.streetId = values.street;
     data.province = ''
     data.city = ''
     data.zone = ''
-    data.street = ''
    
     if (props.modalVisible.id) {
       data.id = props.modalVisible.id
@@ -236,7 +202,33 @@ const CreateForm = (props) => {
 
   };
 
-
+  const props1 = {
+    name: 'file',
+    action: api+ 'apiv2/',
+    // action: "https://cat.shishangbag.vip/sbag-server/back/upload/one",
+    headers: {
+      authorization: 'authorization-text',
+    },
+    data: {
+      ...dataConversion({
+        'method': 'system.household.householdImport',
+        "biz_content": JSON.stringify({
+          communityId: itemId,
+        })
+      })
+    },
+    onChange(info) {
+      console.log(info)
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
   return (
     <Modal
       // destroyOnClose
@@ -274,7 +266,7 @@ const CreateForm = (props) => {
             })}
           </Select>
         </Form.Item>
-        <Form.Item name={['street']} label="街道选择" rules={[{ required: true }]}  >
+        <Form.Item name={['streetId']} label="街道选择" rules={[{ required: true }]}  >
           <Select style={{ width: 200 }} placeholder="请选择" disabled={street_a.length < 1} onChange={onChange_street} >
             {street_a.map((e, i) => {
               return (<Option key={i} value={e.id}>{e.areaName}</Option>)
@@ -284,11 +276,14 @@ const CreateForm = (props) => {
         <Form.Item name={['address']} label="详细地址" rules={[{ required: true }]}  >
           <Input placeholder="请输入" style={{ width: '200px' }} />
         </Form.Item>
-
+        {/* 导入户表 */}
+        <Upload {...props1}>
+          <Button icon={<UploadOutlined />}>导入户表</Button>
+        </Upload>,
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
             确定
-            </Button>
+          </Button>
         </Form.Item>
       </Form>
     </Modal>

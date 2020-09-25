@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Row, Col, Button, Divider, Dropdown, Select, message, Input, Tabs, Modal, Radio, Alert } from 'antd';
+import { Form, Button, message, Input, Modal, Select } from 'antd';
+const { Option } = Select;
 import dataConversion from '@/utils/dataConversion.js'
 import { connect } from 'umi';
 import style from "./../index.less"
@@ -21,50 +22,181 @@ const validateMessages = {
 const CreateForm = (props) => {
   const { modalVisible, onCancel } = props;
   const [form] = Form.useForm();
-  const [fileList1, setFileList1] = useState([])
   const [itemId, setItemId] = useState();
-  const [site, setSite] = useState([])
+
+  // 地址选择
+  const [provinceList_a, setProvinceList_a] = useState([])
+  const [cityList_a, setCityList_a] = useState([])
+  const [administrativeDistrict_a, setAdminstrativeDistrict_a] = useState([])
+  const [street_a, setStreet_a] = useState([])
+
+
+
   useEffect(() => {
-    if (props.modalVisible.id) {//设置编辑
-      setItemId(props.modalVisible.id);
+    if (props.siteItem.id) {//设置编辑
+      setItemId(props.siteItem.id);
+      getSiteInfo(props.siteItem.id)
       form.setFieldsValue(props.modalVisible);
-      console.log(props.modalVisible)
-      // setSite(props.modalVisible.site)
     } else {
       form.resetFields();
-      const fileList1 = '';
-      setFileList1(fileList1)
-      siteList()
     }
-  }, [props.modalVisible.id]);
+    getProvince()
+  }, [props.siteItem.id]);
 
-
-  // 网点列表
-  const siteList = () => {
+  // 获取网点详情
+  const getSiteInfo = (id) => {
     props.dispatch({
-      type: 'productSort/productList',
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.site.page'
+          'method': 'system.area.get',
+          "biz_content": JSON.stringify({ "id": id })
         })
       }
-    }).then((res) => {
-      setSite(res.data)
+    }).then(res => {
+      form.setFieldsValue(res.result);
+      editGetList(res.result)
     })
+
   }
-  const onFinish = values => {
+
+  // 编辑获取地址数据
+  const editGetList = (item) => {
+    // getCitys(item.provinceId)
+    // getAdministrativeDistrict(item.cityId)
+    // getStreet(item.zoneId)
+  }
+
+  // 获取省份列表数据
+  const getProvince = () => {
+
     props.dispatch({
-      type: 'productSort/productEdit',
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          "method": itemId ? "system.supervisor.update" : "system.supervisor.save",
-          "biz_content": JSON.stringify({
-            "id": itemId ? itemId : '',
-            "name": values.name,
-            "mobile": values.mobile,
-            "siteId": values.site,
-            "sex": values.sex,
-          })
+          'method': 'system.area.children',
+          "biz_content": JSON.stringify({ "id": "0" })
+        })
+      }
+    }).then(res => {
+      let arr = res.result
+      setProvinceList_a(arr)
+    })
+
+  }
+  // 根据省份Id获取城市列表数据
+  const getCitys = (id) => {
+
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.children',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setCityList_a(res.result)
+    })
+
+  }
+  // 根据城市ID获取行政区列表数据
+  const getAdministrativeDistrict = (id) => {
+
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.children',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setAdminstrativeDistrict_a(res.result)
+
+      console.log(res, "行政区列表")
+    })
+
+  }
+  // 根据行政区ID获取街道列表数据
+  const getStreet = (id) => {
+
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.children',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setStreet_a(res.result)
+
+      console.log(res, "街道列表")
+    })
+
+  }
+
+
+
+  const onChange_province = value => {
+    getCitys(value) // 下拉选取省
+    form.setFieldsValue({
+      city: '',
+      zone: '',
+      street: '',
+      communityId: '',
+    });
+  }
+  const onChange_citys = value => {
+    getAdministrativeDistrict(value)  // 下拉选取市
+    form.setFieldsValue({
+      zone: '',
+      street: '',
+      communityId: '',
+    });
+  }
+
+  const onChange_administrativeDistrict = value => {
+    getStreet(value)  // 下拉选取区
+    form.setFieldsValue({
+      street: '',
+      communityId: '',
+    });
+  }
+  const onChange_street = value => {
+    getCommunity(value) // 下拉选取街道
+    form.setFieldsValue({
+      communityId: '',
+    });
+  }
+  const onChange_community = value => { }
+
+
+
+
+
+
+  // 提交订单
+  const onFinish = values => {
+    let data = values;
+    data.province = ''
+    data.city = ''
+    data.zone = ''
+    data.street = ''
+
+
+
+
+
+    console.log(values, "values")
+
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          "method": "system.area.save",
+          "biz_content": JSON.stringify(values)
         })
       }
     }).then((res) => {
@@ -77,6 +209,7 @@ const CreateForm = (props) => {
         message.error(res.msg);
       }
     })
+
   };
 
 
@@ -84,7 +217,7 @@ const CreateForm = (props) => {
     <Modal
       // destroyOnClose
       getContainer={false}
-      title="商品分类"
+      title="新增"
       visible={modalVisible}
       onOk={() => onFinish()}
       onCancel={() => props.onCancel()}
@@ -92,40 +225,46 @@ const CreateForm = (props) => {
       footer={null}
     >
       {/* {props.children} */}
-      <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name={['name']} label="督导员姓名" rules={[{ required: true }]}  >
-          <Input style={{ width: '300px' }} />
+      <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 8 }}>
+        <Form.Item name={['areaName']} label="区域名称" rules={[{ required: true }]}  >
+          <Input placeholder="请输入" style={{ width: '200px' }} />
         </Form.Item>
-        <Form.Item name={['mobile']} label="手机号" rules={[{ required: true }]}  >
-          <Input style={{ width: '300px' }} />
+        <Form.Item name={['titleClassification']} label="详细地址" rules={[{ required: true }]}  >
+          <Input placeholder="请输入" style={{ width: '200px' }} />
         </Form.Item>
-        <Form.Item name={['sex']} label="性别" rules={[{ required: true }]}  >
-          <Select
-            placeholder="请选择性别"
-            allowClear
-            style={{ width: '300px' }}
-          >
-            <Option value={"男"}>男</Option>
-            <Option value={"女"}>女</Option>
-          </Select>
+        {/* <Form.Item name={['linkMan']} label="联系人" rules={[{ required: true }]}  >
+          <Input placeholder="请输入" style={{ width: '200px' }} />
         </Form.Item>
-        <Form.Item name={['site']} label="关联网点" rules={[{ required: false }]}>
-          <Select
-            placeholder="请选择网点"
-            allowClear
-            style={{ width: '300px' }}
-          >
-            {site.map((item) => {
-              return <Option key={item.id} value={item.id}>{item.name}</Option>
+        <Form.Item name={['linkMobile']} label="联系电话" rules={[{ required: true }]}  >
+          <Input placeholder="请输入" style={{ width: '200px' }} />
+        </Form.Item> */}
+        {/* <Form.Item name={['province']} label="省份选择" rules={[{ required: true }]}  >
+          <Select style={{ width: 200 }} placeholder="请选择" onChange={onChange_province} >
+            {provinceList_a.map((e, i) => {
+              return (<Option key={i} value={e.id}>{e.areaName}</Option>)
             })}
           </Select>
         </Form.Item>
-
-        {/* <Form.Item name={['isShow']} label="状态" rules={[{ required: true }]}>
-          <Radio.Group onChange={onChange} value={0}>
-            <Radio value={1}>显示</Radio>
-            <Radio value={0}>隐藏</Radio>
-          </Radio.Group>
+        <Form.Item name={['city']} label="城市选择" rules={[{ required: true }]}  >
+          <Select style={{ width: 200 }} placeholder="请选择" disabled={cityList_a.length < 1} onChange={onChange_citys} >
+            {cityList_a.map((e, i) => {
+              return (<Option key={i} value={e.id}>{e.areaName}</Option>)
+            })}
+          </Select>
+        </Form.Item>
+        <Form.Item name={['zone']} label="（区/县）选择" rules={[{ required: true }]}  >
+          <Select style={{ width: 200 }} placeholder="请选择" disabled={administrativeDistrict_a.length < 1} onChange={onChange_administrativeDistrict}  >
+            {administrativeDistrict_a.map((e, i) => {
+              return (<Option key={i} value={e.id}>{e.areaName}</Option>)
+            })}
+          </Select>
+        </Form.Item>
+        <Form.Item name={['street']} label="街道选择" rules={[{ required: true }]}  >
+          <Select style={{ width: 200 }} placeholder="请选择" disabled={street_a.length < 1} onChange={onChange_street} >
+            {street_a.map((e, i) => {
+              return (<Option key={i} value={e.id}>{e.areaName}</Option>)
+            })}
+          </Select>
         </Form.Item> */}
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
@@ -138,7 +277,9 @@ const CreateForm = (props) => {
 };
 
 // export default CreateForm;
-export default connect(({ shop, loading }) => ({
-  submitting: loading.effects['shop/ProductSort'],
+export default connect(({ getSiteInfo, loading }) => ({
+  getSiteInfo: loading.effects['site/getSiteInfo'],
 }))(CreateForm);
+
+
 

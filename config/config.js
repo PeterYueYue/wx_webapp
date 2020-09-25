@@ -49,6 +49,23 @@ export default defineConfig({
               redirect:'/shop/product',
             },
             {
+              path: '/code',//二维码管理
+              icon: 'user',
+              name: 'code',
+              "routes":[
+                { path: '/code/codeList', name: 'codeList', component: './code/codeList', }, //二维码列表 
+              ]
+            },
+            {
+              path: '/family',//家庭管理
+              icon: 'user',
+              name: 'family',
+              "routes":[
+                { path: '/family/familyList', name: 'familyList', component: './family/familyList', }, //家庭列表 
+                { path: '/family/familyOrder', name: 'familyOrder', component: './family/familyOrder', }, //家庭列表 
+              ]
+            },
+            {
               path: '/area',//区域管理
               icon: 'user',
               name: 'area',
@@ -97,6 +114,7 @@ export default defineConfig({
               name: 'ListUser', 
               "routes":[
                 { path: '/ListUser/userList', name: 'userList', component: './ListUser/userList', }, //用户列表 
+                
                 // { path: '/ListUser/imageReview', name: 'imageReview', component: './ListUser/imageReview', }, //图片审核 
               ]
             },

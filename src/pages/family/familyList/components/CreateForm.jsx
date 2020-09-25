@@ -93,7 +93,7 @@ const CreateForm = (props) => {
     >
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name={['name']} label="小区名称" rules={[{ required: true }]}  >
+        <Form.Item name={['name']} label="督导员姓名" rules={[{ required: true }]}  >
           <Input style={{ width: '300px' }} />
         </Form.Item>
         <Form.Item name={['mobile']} label="手机号" rules={[{ required: true }]}  >

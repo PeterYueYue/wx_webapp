@@ -1,320 +1,390 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { DownOutlined, PlusOutlined, BlockOutlined } from '@ant-design/icons';
-import {Form, Row,Col,Button, Divider, Dropdown, Menu, message, Input, Tabs ,Modal,Popconfirm} from 'antd';
+import { QuestionCircleOutlined, PlusOutlined, BlockOutlined } from '@ant-design/icons';
+import { Form, Row, Col, Button, Table, Tag, Space, message, Input, Card, Modal, Select, Popconfirm } from 'antd';
+const { Option } = Select;
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
+
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-// import UploadImg from "./../productEdit/components/Upload"
 import style from "./index.less"
 import { Link, connect } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
-const { TabPane } = Tabs;
-/**
- * 添加节点
- * @param fields
- */
-
-const handleAdd = async fields => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-/**
- * 更新节点
- * @param fields
- */
-
-const handleUpdate = async fields => {
-  const hide = message.loading('正在配置');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async selectedRows => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map(row => row.key),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
 
 
-const Product = (props) => {
+
+
+
+const SiteList = (props) => {
   const [form] = Form.useForm();
-  const [sorter, setSorter] = useState('');
+  const [list, setList] = useState([]);
   const [createModalVisible, handleModalVisible] = useState(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [support, setSupport] = useState([])
-  const [stepFormValues, setStepFormValues] = useState({});
+  const [siteItem, setSiteItem] = useState('')
   const actionRef = useRef();
-  const [list, setList] = useState([])
-  useEffect(() => {
-  }, []);
+  // 地址选择
+  const [provinceList, setProvinceList] = useState([])
+  const [cityList, setCityList] = useState([])
+  const [administrativeDistrict, setAdminstrativeDistrict] = useState([])
+  const [street, setStreet] = useState([])
+  const [open, setOpen] = useState([])
+  const [community, setCommunity] = useState([])
+  // 分页
+  const [total, setTotal] = useState('')
+  const [current, setCurrent] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  // 查询数据
+  const [provinceItem, setProvinceItem] = useState(""); //省
+  const [cityItem, setCityItem] = useState(""); //市
+  const [admDisItem, setAdmDisItem] = useState(""); //区、县
+  const [streetItem, setStreetItem] = useState(""); //街道
+  const [openItem, setOpenItem] = useState(""); //开通
+  const [siteValue, setSiteValue] = useState("")
+  const [linkManName, setLinkManName] = useState("")
 
+
+
+
+
+  useEffect(() => {
+    getProvince()
+    getProductList()
+  }, [])
 
   const columns = [
     {
-      title: '督导员',
-      dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
+      title: '区域名称',
+      dataIndex: 'areaName',
+      key: 'name',
     },
     {
-      title: '所属网点',
-      dataIndex: 'siteName',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
+      title: '详细地址',
+      dataIndex: 'titleClassification',
+      key: 'province',
     },
     {
-      title: '性别',
-      dataIndex: 'sex',
-      hideInSearch: true,
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createDate',
-      sorter: true,
-      valueType: 'dateTime',
-      hideInSearch: true,
-      hideInForm: false,
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
+      title: '状态',
+      dataIndex: 'isOpen',
+      render: (value) => {
+        if(value==1) {
+          return '已开通'
+        } else {
+          return '未开通'
         }
-        if (`${status}` === '3') {
-          return <Input {...rest} placeholder="请输入异常原因！" />;
-        }
-        return defaultRender(item);
       },
     },
     {
       title: '操作',
-      dataIndex: 'id',
-      valueType: 'option',
-      render: (_, record) => (
-        <>
-          <a
-            onClick={() => {  
-              // handleUpdateModalVisible(true);
-              setStepFormValues(record);
-              handleModalVisible(record);
-            }}
-          >
-            修改
-          </a>
-          <Divider type="vertical" />
-          {/* <a  onClick={() => idelete(record)}>删除</a> */}
-          <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
-            <a href="#">删除</a>
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <a onClick={() => {
+            setAreaOpen(record)
+          }}
+          >{record.isOpen==0?"开通":"关闭"} </a>
+          <a onClick={() => {
+            // setSiteItem(record)
+            // handleModalVisible(true)
+          }}
+          >编辑</a>
+          <Popconfirm title="确定删除吗？" onConfirm={() => deleteItem(record.id)} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+            <a>删除</a>
           </Popconfirm>
-        </>
+        </Space>
       ),
     },
   ];
-  // 列表
-  const getProductList = (params) => {
-    return props.dispatch({
-      type: 'productSort/productList',
+  // 搜索查询
+  const search = () => {
+    getProductList()
+  }
+  // 获取省份列表数据
+  const getProvince = () => {
+    props.dispatch({
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.supervisor.page',
+          'method': 'system.area.allChildren',
+          "biz_content": JSON.stringify({ "id": "0" })
+        })
+      }
+    }).then(res => {
+      let arr = res.result
+      setProvinceList(arr)
+    })
+
+  }
+  // 根据省份Id获取城市列表数据
+  const getCitys = (id, item) => {
+    setProvinceItem(item.item)
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.allChildren',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setCityList(res.result)
+    })
+
+  }
+  // 根据城市ID获取行政区列表数据
+  const getAdministrativeDistrict = (id, item) => {
+
+    setCityItem(item.item)
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.allChildren',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setAdminstrativeDistrict(res.result)
+    })
+
+  }
+  // 根据行政区ID获取街道列表数据
+  const getStreet = (id, item) => {
+    setAdmDisItem(item.item)
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.allChildren',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setStreet(res.result)
+    })
+
+  }
+  // 根据街道ID获取小区列表数据
+  const getCommunity = (id, item) => {
+    setStreetItem(item.item)
+    props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.community.getByStreetId',
+          "biz_content": JSON.stringify({ "id": id })
+        })
+      }
+    }).then(res => {
+      setCommunity(res.result)
+      console.log(res, "小区列表")
+    })
+  }
+  const getOpen = (id, item) => {
+    setOpenItem(item.item)
+  }
+  // //根据小区ID返回网点数据
+  // const getSite = (id, item) => {
+  //   setCommunityItem(item.item)
+  //   props.dispatch({
+  //     type: 'site/getlist',
+  //     payload: {
+  //       ...dataConversion({
+  //         'method': 'system.community.getByStreetId',
+  //         "biz_content": JSON.stringify({ "id": id })
+  //       })
+  //     }
+  //   }).then(res => {
+  //     console.log(res, "网点")
+  //   })
+  // }
+
+  const onChange_province = (value, item) => getCitys(value, item) // 下拉选取省
+  const onChange_citys = (value, item) => getAdministrativeDistrict(value, item)  // 下拉选取市
+  const onChange_administrativeDistrict = (value, item) => getStreet(value, item)  // 下拉选取区
+  const onChange_street = (value, item) => getCommunity(value, item) // 下拉选取街道
+  // const onChange_community = (value, item) => getSite(value, item)   // 根据小区ID返回网点数据
+  const onChange_State = (value, item) => getOpen(value, item)   // 下拉选取是否开通
+  // 列表
+  let titleClassification = '';
+  if (provinceItem) {
+    titleClassification+=provinceItem.areaName;
+  }
+  if (cityItem) {
+    titleClassification+='-'+cityItem.areaName;
+  }
+  if (admDisItem) {
+    titleClassification+='-'+admDisItem.areaName;
+  }
+  if (streetItem) {
+    titleClassification+='-'+streetItem.areaName;
+  }
+  const getProductList = (page) => {
+    props.dispatch({
+      type: 'site/productList',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.page',
           "biz_content": JSON.stringify({
-            "pageNumber": params.current,
-            "pageSize": params.pageSize,
-            "name":params.name,
+            "pageNumber": page ? page : current,
+            "pageSize": pageSize,
+            "titleClassification": titleClassification,
+            "areaName": siteValue,
+            "isOpen": openItem.id,
           })
         })
       }
+    }).then(res => {
+      setList(res.data)
+      setTotal(res.total)
+      setCurrent(res.current)
     })
   }
-  //删除
-  const idelete = (currentItem) => {
-    Modal.confirm({
-      title: '删除任务',
-      content: '确定删除该任务吗？',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => deleteItem(currentItem.id),
-    });
-  };
-  const deleteItem= (id) => {
+  const setAreaOpen = (value) => {
     return props.dispatch({
-      type: 'productSort/productEdit',
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.supervisor.delete',
+          'method': 'system.area.setOpen',
+          "biz_content": JSON.stringify({
+            "id": value.id,
+          })
+        })
+      }
+    }).then((res) => {
+      reload();
+    })
+  }
+  const deleteItem = (id) => {
+    return props.dispatch({
+      type: 'site/getlist',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
         })
       }
-    }).then((res) => { 
-      actionRef.current.reload();
+    }).then((res) => {
+      reload();
     })
   }
-  function cancel() {
-    message.error('点击了取消');
+  const reload = () => {
+    getProductList()
   }
-  const reload = ()=> {
-    actionRef.current.reload();
+  // 打开新建组件
+  function openModalVisible() {
+    handleModalVisible(true)
   }
-// 主图数据
-const [fileList1,setFileList1] = useState([]);
+
+  function siteName(val) {
+    console.log(val)
+  }
+  function clearForm() {
+    form.resetFields();
+    setSiteValue("");
+    setLinkManName("");
+  }
+
+  // 分页处理
+  const pagination = {
+    current: current,
+    pageSize: pageSize,
+    total: total,
+    showTotal: () => `共${total}条`,
+    onChange: (page, pageSize) => {
+      setCurrent(page)
+      getProductList(page)
+    }
+  }
+
+  const openList = [
+    {
+      id:0,
+      areaName: "未开通",
+    },
+    {
+      id:1,
+      areaName: "已开通",
+    }
+  ]
   return (
     <PageHeaderWrapper>
-      <ProTable
-        headerTitle="商品分类表格"
-        actionRef={actionRef}
-        pagination={{ pageSize: 10 }}
-        rowKey="key"
-        onChange={(_, _filter, _sorter) => {
-          const sorterResult = _sorter;
-          if (sorterResult.field) {
-            setSorter(`${sorterResult.field}_${sorterResult.order}`);
-          }
-        }}
-        params={{
-          sorter,
-        }}
-        toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined /> 新建
-          </Button>,
-          selectedRows && selectedRows.length > 0 && (
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={async e => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
-                      action.reload();
-                    }
-                  }}
-                  selectedKeys={[]}
-                >
-                  <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                批量操作 <DownOutlined />
-              </Button>
-            </Dropdown>
-          ),
-        ]}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-          <div>
-            已选择{' '}
-            <a
-              style={{
-                fontWeight: 600,
-              }}
-            >
-              {selectedRowKeys.length}
-            </a>{' '}
-            个商品&nbsp;&nbsp;
-          </div>
-        )}
-        request={params => getProductList(params)}
-        columns={columns}
-        rowSelection={{}}
-      />
-      <CreateForm 
-        onCancel={() =>{handleModalVisible(false)}} modalVisible={createModalVisible}
-        reload={() =>{reload()}}
+      <Card bordered={true} style={{ width: "100%" }}>
+        <Form form={form} name="nest-messages"  >
+          <Row className={style.row}>
+            <Col className={style.inputItem} span={8}>
+              <Form.Item name={['province']} label="省份选择"  >
+                <Select style={{ width: 200 }} placeholder="请选择" onChange={onChange_province} >
+                  {provinceList.map((e, i) => {
+                    return (<Option key={i} item={e} value={e.id}>{e.areaName}</Option>)
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name={['city']} label="城市选择"  >
+                <Select style={{ width: 200 }} placeholder="请选择" onChange={onChange_citys} >
+                  {cityList.map((e, i) => {
+                    return (<Option key={i} item={e} value={e.id}>{e.areaName}</Option>)
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name={['administrativeDistrict']} label="区/县选择"  >
+                <Select style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_administrativeDistrict} >
+                  {administrativeDistrict.map((e, i) => {
+                    return (<Option key={i} item={e} value={e.id}>{e.areaName}</Option>)
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className={style.row}>
+            <Col span={8}>
+              <Form.Item name={['street']} label="街道选择"  >
+                <Select style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_street} >
+                  {street.map((e, i) => {
+                    return (<Option key={i} item={e} value={e.id}>{e.areaName}</Option>)
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <span>区域名称: </span>
+              <Input style={{ width: 200 }} value={siteValue} onChange={(e) => { setSiteValue(e.target.value) }} placeholder="请输入" />
+            </Col>
+            <Col span={8}>
+              <Form.Item name={['isOpen']} label="是否开通"  >
+                  <Select style={{ width: 200 }} placeholder="请选择" optionFilterProp="children" onChange={onChange_State} >
+                    {openList.map((e, i) => {
+                      return (<Option key={i} item={e} value={e.id}>{e.areaName}</Option>)
+                    })}
+                  </Select>
+                </Form.Item>
+            </Col>
+          </Row>
+
+        </Form>
+
+        <div className={style.searBtnBox}>
+          <Button className={style.search} onClick={search} type="primary">查询</Button>
+          <Button onClick={openModalVisible} className={style.search} type="primary">新建</Button>
+          <Button onClick={clearForm}>重置</Button>
+        </div>
+      </Card>
+      <Table pagination={pagination} className={style.table} bordered={true} columns={columns} dataSource={list} />
+      <CreateForm
+        onCancel={() => { handleModalVisible(false) }} modalVisible={createModalVisible}
+        siteItem={siteItem}
+        reload={() => { reload() }}
       >
-        {/* <ProTable
-          onSubmit={async value => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          rowKey="key"
-          type="form"
-        columns={columns}
-        rowSelection={{}}
-        /> */}
       </CreateForm>
-      {/* {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async value => {
-            const success = await handleUpdate(value);
 
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null} */}
     </PageHeaderWrapper>
   );
 };
-export default connect(({ shop, loading }) => ({
-  shop: shop,
-  submitting: loading.effects['shop/Product'],
-}))(Product);
+export default connect(({ SiteList, loading }) => ({
+  SiteList: SiteList,
+  submitting: loading.effects['site/SiteList'],
+}))(SiteList);

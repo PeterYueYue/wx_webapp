@@ -91,17 +91,20 @@ const UserList = (props) => {
       dataIndex: 'nickName',
     },
     {
-      title: '真实姓名',
-      dataIndex: 'realName',
-    },
-    {
       title: '手机号',
-      dataIndex: 'mobile',
+      dataIndex: 'userMobile',
     },
     {
-      title: '积分',
+      title: '投递次数',
+      dataIndex: 'sendNumber',
+    },
+    {
+      title: '获得总收益(rmb)',
       dataIndex: 'totalMoney',
-      hideInSearch: true,
+    },
+    {
+      title: '剩余收益(rmb)',
+      dataIndex: 'residueMoney',
     },
     {
       title: '状态',
@@ -109,10 +112,10 @@ const UserList = (props) => {
       hideInForm: true,
       hideInSearch: true,
       valueEnum: {
-        1: {
+        0: {
           text: '正常',
         },
-        0: {
+        1: {
           text: '冻结',
         },
       },
@@ -157,11 +160,11 @@ const UserList = (props) => {
           <a
             onClick={() => {  
               // handleUpdateModalVisible(true);
-              // setStepFormValues(record);
-              // handleModalVisible(record);
+              setStepFormValues(record);
+              handleModalVisible(record);
             }}
           >
-            冻结
+            查看详情
           </a>
           {/* <Divider type="vertical" />
           <a  onClick={() => idelete(record)}>删除</a> */}
@@ -171,7 +174,7 @@ const UserList = (props) => {
   ];
   // 用户列表
   const getProductList = (params) => {
-    // return;
+    return;
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
@@ -221,7 +224,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="用户表格"
+        headerTitle="商品分类表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"

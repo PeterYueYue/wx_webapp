@@ -80,7 +80,7 @@ const SiteList = (props) => {
     },
     {
       title:'小区名称',
-      dataIndex:'community',
+      dataIndex:'communityName',
       key:'community'
     },
     {
@@ -90,7 +90,7 @@ const SiteList = (props) => {
     },
     {
       title:'编号',
-      dataIndex:'id',
+      dataIndex:'sn',
       key:'id'
 
     },

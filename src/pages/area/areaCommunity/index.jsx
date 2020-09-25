@@ -9,68 +9,10 @@ import UpdateForm from './components/UpdateForm';
 // import UploadImg from "./../productEdit/components/Upload"
 import style from "./index.less"
 import { Link, connect } from 'umi';
+import { history } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
 const { TabPane } = Tabs;
-/**
- * 添加节点
- * @param fields
- */
 
-const handleAdd = async fields => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-/**
- * 更新节点
- * @param fields
- */
-
-const handleUpdate = async fields => {
-  const hide = message.loading('正在配置');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async selectedRows => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map(row => row.key),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
 
 
 const Product = (props) => {
@@ -82,9 +24,10 @@ const Product = (props) => {
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [list, setList] = useState([])
+  
   useEffect(() => {
   }, []);
-
+  
 
   const columns = [
     {
@@ -119,6 +62,11 @@ const Product = (props) => {
       hideInSearch: true,
     },
     {
+      title: '住户数量',
+      dataIndex: 'householdNum',
+      hideInSearch: true,
+    },
+    {
       title: '创建时间',
       dataIndex: 'createDate',
       sorter: true,
@@ -148,11 +96,12 @@ const Product = (props) => {
               setStepFormValues(record);
               handleModalVisible(record);
             }}
-          >
+          > 
             修改
           </a>
           <Divider type="vertical" />
-          {/* <a  onClick={() => idelete(record)}>删除</a> */}
+          <Link to={{pathname:'/area/areaSet', query:{name: record.name}}} > 详情</Link>
+          <Divider type="vertical" />
           <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
             <a href="#">删除</a>
           </Popconfirm>
@@ -254,7 +203,7 @@ const [fileList1,setFileList1] = useState([]);
         ]}
         tableAlertRender={({ selectedRowKeys, selectedRows }) => (
           <div>
-            已选择{' '}
+            已选择{''}
             <a
               style={{
                 fontWeight: 600,
@@ -273,44 +222,7 @@ const [fileList1,setFileList1] = useState([]);
         onCancel={() =>{handleModalVisible(false)}} modalVisible={createModalVisible}
         reload={() =>{reload()}}
       >
-        {/* <ProTable
-          onSubmit={async value => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          rowKey="key"
-          type="form"
-        columns={columns}
-        rowSelection={{}}
-        /> */}
       </CreateForm>
-      {/* {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async value => {
-            const success = await handleUpdate(value);
-
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null} */}
     </PageHeaderWrapper>
   );
 };

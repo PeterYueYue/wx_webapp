@@ -6,9 +6,9 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-// import UploadImg from "./../productEdit/components/Upload"
 import style from "./index.less"
 import { Link, connect } from 'umi';
+import { history } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
 const { TabPane } = Tabs;
 /**
@@ -79,44 +79,47 @@ const Product = (props) => {
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [support, setSupport] = useState([])
-  const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [list, setList] = useState([])
+  const [community,setCommunity] = useState(history.location.query.name ? history.location.query.name : "")
   useEffect(() => {
+    
   }, []);
-
 
   const columns = [
     {
-      title: '督导员',
-      dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
+      title: '小区名字',
+      dataIndex: 'community',
     },
     {
-      title: '所属网点',
-      dataIndex: 'siteName',
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
-    },
-    {
-      title: '性别',
-      dataIndex: 'sex',
+      title: '省份',
+      dataIndex: 'province',
       hideInSearch: true,
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
+    },
+    {
+      title: '城市',
+      dataIndex: 'city',
+      hideInSearch: true,
+    },
+    {
+      title: '区',
+      dataIndex: 'zone',
+      hideInSearch: true,
+    },
+    {
+      title: '街道',
+      dataIndex: 'street',
+      hideInSearch: true,
+    },
+    {
+      title: '楼号',
+      dataIndex: 'build',
+      hideInSearch: true,
+    },
+    {
+      title: '房间号',
+      dataIndex: 'room',
+      hideInSearch: true,
     },
     {
       title: '创建时间',
@@ -142,7 +145,7 @@ const Product = (props) => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a
+          {/* <a
             onClick={() => {  
               // handleUpdateModalVisible(true);
               setStepFormValues(record);
@@ -150,7 +153,7 @@ const Product = (props) => {
             }}
           >
             修改
-          </a>
+          </a> */}
           <Divider type="vertical" />
           {/* <a  onClick={() => idelete(record)}>删除</a> */}
           <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
@@ -162,15 +165,20 @@ const Product = (props) => {
   ];
   // 列表
   const getProductList = (params) => {
+    console.log(community)
+    if(community) {
+      params.community = community;
+      setCommunity('')
+    }
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.supervisor.page',
+          'method': 'system.household.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
-            "name":params.name,
+            "community": params.community,
           })
         })
       }
@@ -212,7 +220,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -262,12 +270,14 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            行&nbsp;&nbsp;
           </div>
         )}
+        form={{ initialValues: {community:community} }}
         request={params => getProductList(params)}
         columns={columns}
         rowSelection={{}}
+       
       />
       <CreateForm 
         onCancel={() =>{handleModalVisible(false)}} modalVisible={createModalVisible}

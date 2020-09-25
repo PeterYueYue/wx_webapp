@@ -214,17 +214,14 @@ const CreateForm = (props) => {
 
 
 
-    if(props.siteItem.id){
-      data.id= props.siteItem.id
-    }
-    console.log(data,"data")
+    console.log(values,"values")
     
     props.dispatch({
-      type:'site/getlist',
+      type: 'site/getlist',
       payload: {
         ...dataConversion({
-          "method":itemId?"system.site.update":"system.site.save",
-          "biz_content": JSON.stringify(data)
+          "method": "system.site.save",
+          "biz_content": JSON.stringify(values)
         })
       }
     }).then((res) => {

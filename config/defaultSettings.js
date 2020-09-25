@@ -10,7 +10,7 @@ const proSettings = {
   menu: {
     locale: true,
   },
-  title: '无锡平台中台',
+  title: '无锡易腐垃圾平台',
   pwa: false,
   iconfontUrl: '',
 };

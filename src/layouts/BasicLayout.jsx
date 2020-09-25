@@ -37,7 +37,7 @@ const menuDataRender = menuList => {
       name: 'code',
       "routes": [
         { path: '/code/codeList', name: 'codeList', component: './code/codeList', }, //二维码列表 
-        { path: '/code/codeManage', name: 'codeManage', component: './code/codeManage', }, //解绑二维码 
+        // { path: '/code/codeManage', name: 'codeManage', component: './code/codeManage', }, //解绑二维码 
       ]
     },
     {
@@ -54,6 +54,7 @@ const menuDataRender = menuList => {
       name: 'family',
       "routes": [
         { path: '/family/familyList', name: 'familyList', component: './family/familyList', }, //家庭列表 
+        { path: '/family/familyOrder', name: 'familyOrder', component: './family/familyOrder', }, //家庭订单 
       ]
     },
     {
@@ -61,7 +62,6 @@ const menuDataRender = menuList => {
       name: 'ListUser',
       "routes": [
         { path: '/ListUser/userList', name: 'userList', component: './ListUser/userList', }, //用户列表 
-        { path: '/ListUser/userOrder', name: 'userOrder', component: './ListUser/userOrder', }, //用户投递订单 
       ]
     },
     {
@@ -167,7 +167,7 @@ const BasicLayout = props => {
   const { formatMessage } = useIntl();
   return (
     <ProLayout
-      logo="http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png"
+      // logo="http://sbag-small.oss-cn-huhehaote.aliyuncs.com/upload/img/web/yy/index/0602.png"
       formatMessage={formatMessage}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">

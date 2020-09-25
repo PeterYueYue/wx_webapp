@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Row, Col, Button, Divider, Dropdown, Select, message, Input, Tabs, Modal, Radio, Alert } from 'antd';
+import { Form, Row, Col, Button, Divider, Dropdown, message, Input, Tabs, Modal, Radio, Alert } from 'antd';
 import dataConversion from '@/utils/dataConversion.js'
 import { connect } from 'umi';
 import style from "./../index.less"
@@ -21,7 +21,6 @@ const validateMessages = {
 const CreateForm = (props) => {
   const { modalVisible, onCancel } = props;
   const [form] = Form.useForm();
-  const [fileList1, setFileList1] = useState([])
   const [itemId, setItemId] = useState();
   const [site, setSite] = useState([])
   useEffect(() => {
@@ -29,41 +28,22 @@ const CreateForm = (props) => {
       setItemId(props.modalVisible.id);
       form.setFieldsValue(props.modalVisible);
       console.log(props.modalVisible)
-      // setSite(props.modalVisible.site)
     } else {
       form.resetFields();
-      const fileList1 = '';
-      setFileList1(fileList1)
-      siteList()
     }
   }, [props.modalVisible.id]);
 
 
-  // 网点列表
-  const siteList = () => {
-    props.dispatch({
-      type: 'productSort/productList',
-      payload: {
-        ...dataConversion({
-          'method': 'system.site.page'
-        })
-      }
-    }).then((res) => {
-      setSite(res.data)
-    })
-  }
   const onFinish = values => {
     props.dispatch({
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          "method": itemId ? "system.supervisor.update" : "system.supervisor.save",
+          "method": itemId ? "system.qrcode.update" : "system.qrcode.save",
           "biz_content": JSON.stringify({
             "id": itemId ? itemId : '',
             "name": values.name,
-            "mobile": values.mobile,
-            "siteId": values.site,
-            "sex": values.sex,
+            "number": values.number,
           })
         })
       }
@@ -84,7 +64,7 @@ const CreateForm = (props) => {
     <Modal
       // destroyOnClose
       getContainer={false}
-      title="商品分类"
+      title="二维码"
       visible={modalVisible}
       onOk={() => onFinish()}
       onCancel={() => props.onCancel()}
@@ -93,32 +73,11 @@ const CreateForm = (props) => {
     >
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name={['name']} label="小区名称" rules={[{ required: true }]}  >
+        <Form.Item name={['name']} label="二维码用途" rules={[{ required: true }]}  >
           <Input style={{ width: '300px' }} />
         </Form.Item>
-        <Form.Item name={['mobile']} label="手机号" rules={[{ required: true }]}  >
+        <Form.Item name={['number']} label="数量" rules={[{ required: true }]}  >
           <Input style={{ width: '300px' }} />
-        </Form.Item>
-        <Form.Item name={['sex']} label="性别" rules={[{ required: true }]}  >
-          <Select
-            placeholder="请选择性别"
-            allowClear
-            style={{ width: '300px' }}
-          >
-            <Option value={"男"}>男</Option>
-            <Option value={"女"}>女</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item name={['site']} label="关联网点" rules={[{ required: false }]}>
-          <Select
-            placeholder="请选择网点"
-            allowClear
-            style={{ width: '300px' }}
-          >
-            {site.map((item) => {
-              return <Option key={item.id} value={item.id}>{item.name}</Option>
-            })}
-          </Select>
         </Form.Item>
 
         {/* <Form.Item name={['isShow']} label="状态" rules={[{ required: true }]}>

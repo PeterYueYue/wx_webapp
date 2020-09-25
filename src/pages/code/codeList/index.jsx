@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { DownOutlined, PlusOutlined, BlockOutlined } from '@ant-design/icons';
-import {Form, Row,Col,Button, Divider, Dropdown, Menu, message, Input, Tabs ,Modal} from 'antd';
+import {Form, Row,Col,Button, Divider, Dropdown, Menu, message, Input, Tabs ,Modal,Popconfirm} from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
+// import UploadImg from "./../productEdit/components/Upload"
 import style from "./index.less"
 import { Link, connect } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
@@ -35,7 +36,6 @@ const handleAdd = async fields => {
 
 const handleUpdate = async fields => {
   const hide = message.loading('正在配置');
-      console.log(fields)
   try {
     await updateRule({
       name: fields.name,
@@ -73,11 +73,12 @@ const handleRemove = async selectedRows => {
 };
 
 
-const UserList = (props) => {
+const Product = (props) => {
   const [form] = Form.useForm();
   const [sorter, setSorter] = useState('');
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [support, setSupport] = useState([])
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [list, setList] = useState([])
@@ -87,48 +88,24 @@ const UserList = (props) => {
 
   const columns = [
     {
-      title: '昵称',
-      dataIndex: 'nickName',
+      title: '用途',
+      dataIndex: 'name',
     },
     {
-      title: '真实姓名',
-      dataIndex: 'realName',
-    },
-    {
-      title: '手机号',
-      dataIndex: 'mobile',
-    },
-    {
-      title: '积分',
-      dataIndex: 'totalMoney',
+      title: '数量',
+      dataIndex: 'number',
       hideInSearch: true,
     },
     {
-      title: '状态',
-      dataIndex: 'state',
-      hideInForm: true,
+      title: '地址',
+      dataIndex: 'zipUrl',
       hideInSearch: true,
-      valueEnum: {
-        1: {
-          text: '正常',
+      rules: [
+        {
+          required: true,
+          message: '请输入',
         },
-        0: {
-          text: '冻结',
-        },
-      },
-    },
-    {
-      title: '用户类型',
-      dataIndex: 'userType',
-      hideInForm: false,
-      hideInSearch: true,
-      renderText: (item) => {
-        if(item==1) {
-          return '普通会员'
-        } else {
-          return 'VIP'
-        }
-      }
+      ],
     },
     {
       title: '创建时间',
@@ -159,29 +136,31 @@ const UserList = (props) => {
               // handleUpdateModalVisible(true);
               // setStepFormValues(record);
               // handleModalVisible(record);
+              window.location = record.zipUrl;
             }}
           >
-            冻结
+            下载
           </a>
-          {/* <Divider type="vertical" />
-          <a  onClick={() => idelete(record)}>删除</a> */}
+          <Divider type="vertical" />
+          {/* <a  onClick={() => idelete(record)}>删除</a> */}
+          <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
+            <a href="#">删除</a>
+          </Popconfirm>
         </>
       ),
     },
   ];
-  // 用户列表
+  // 列表
   const getProductList = (params) => {
-    // return;
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.user.page',
+          'method': 'system.qrcode.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
-            "nickName":params.nickName,
-            "userMobile":params.userMobile,
+            "name":params.name,
           })
         })
       }
@@ -189,7 +168,6 @@ const UserList = (props) => {
   }
   //删除
   const idelete = (currentItem) => {
-    console.log(currentItem);
     Modal.confirm({
       title: '删除任务',
       content: '确定删除该任务吗？',
@@ -203,7 +181,7 @@ const UserList = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'productType.delete',
+          'method': 'system.qrcode.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
@@ -213,6 +191,9 @@ const UserList = (props) => {
       actionRef.current.reload();
     })
   }
+  function cancel() {
+    message.error('点击了取消');
+  }
   const reload = ()=> {
     actionRef.current.reload();
   }
@@ -221,7 +202,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="用户表格"
+        headerTitle="商品分类表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -235,9 +216,9 @@ const [fileList1,setFileList1] = useState([]);
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          // <Button type="primary" onClick={() => handleModalVisible(true)}>
-          //   <PlusOutlined /> 新建
-          // </Button>,
+          <Button type="primary" onClick={() => handleModalVisible(true)}>
+            <PlusOutlined /> 新建
+          </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
@@ -323,7 +304,7 @@ const [fileList1,setFileList1] = useState([]);
     </PageHeaderWrapper>
   );
 };
-export default connect(({ ListUser, loading }) => ({
-  ListUser: ListUser,
-  submitting: loading.effects['ListUser/UserList'],
-}))(UserList);
+export default connect(({ shop, loading }) => ({
+  shop: shop,
+  submitting: loading.effects['shop/Product'],
+}))(Product);
