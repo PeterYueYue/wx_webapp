@@ -8,7 +8,7 @@ export default {
   'menu.area.areaSet': '门牌号列表',
   'menu.family': '家庭管理',
   'menu.family.familyList': '家庭列表',
-  'menu.family.familyOrder': '家庭订单',
+  'menu.family.familyOrder': '投递积分',
   'menu.ListUser': '用户管理',
   'menu.ListUser.userList': '用户列表',
   'menu.supervisor': '督导员管理',
@@ -19,7 +19,6 @@ export default {
   'menu.media': '媒体公告',
   'menu.media.banner': ' 轮播管理',
   'menu.media.notice': ' 公告管理',
-
   'menu.welcome': '欢迎',
   'menu.shop':'积分商城',
   'menu.shop.product': '商品管理',

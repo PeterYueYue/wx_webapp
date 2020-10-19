@@ -104,7 +104,6 @@ const Product = (props) => {
   }
   //删除
   const idelete = (currentItem) => {
-    console.log(currentItem)
     Modal.confirm({
       title: '删除任务',
       content: '确定删除该任务吗？',
@@ -188,7 +187,7 @@ const Product = (props) => {
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

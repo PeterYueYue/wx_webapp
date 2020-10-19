@@ -134,7 +134,7 @@ const CreateForm = (props) => {
     >
       {/* {props.children} */}
       <Form form={form} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} labelCol={{ span: 5 }}>
-        <Form.Item name="goodType" label="公告类型" rules={[{ required: true }]} >
+        {/* <Form.Item name="goodType" label="公告类型" rules={[{ required: true }]} >
           <Select
             placeholder="请选择公告类型"
             allowClear
@@ -145,7 +145,7 @@ const CreateForm = (props) => {
               return <Option key={item.id} value={item.id}>{item.name}</Option>
             })}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         {
           goodType == 0 ?
             <Form.Item name={['content']} label="公告内容" rules={[{ required: false }]}  >
@@ -158,7 +158,7 @@ const CreateForm = (props) => {
               </Col>
               <Col className={style.uploadBox} span={19}>
                 <Alert
-                  message="建议尺寸: 700*280像素,最多上传1张"
+                  message="建议尺寸: 400*600像素,最多上传1张"
                   type="info"
                 />
               </Col>

@@ -118,15 +118,15 @@ const UserList = (props) => {
       },
     },
     {
-      title: '用户类型',
-      dataIndex: 'userType',
+      title: '用户状态',
+      dataIndex: 'state',
       hideInForm: false,
       hideInSearch: true,
       renderText: (item) => {
         if(item==1) {
-          return '普通会员'
+          return '正常'
         } else {
-          return 'VIP'
+          return '冻结'
         }
       }
     },
@@ -271,7 +271,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

@@ -98,13 +98,23 @@ const Product = (props) => {
       ],
     },
     {
+      title: '手机号',
+      dataIndex: 'mobile',
+      rules: [
+        {
+          required: true,
+          message: '请输入',
+        },
+      ],
+    },
+    {
       title: '所属网点',
       dataIndex: 'siteName',
       rules: [
         {
           required: true,
           message: '请输入',
-        },
+        },  
       ],
     },
     {
@@ -212,7 +222,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="督导员列表"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -262,7 +272,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

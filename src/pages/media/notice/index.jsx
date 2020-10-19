@@ -87,13 +87,6 @@ const Product = (props) => {
 
   const columns = [
     {
-      title: '公告图片',
-      dataIndex: 'pic',
-      hideInSearch: true,
-      hideInForm: false,
-      render: text => <img alt="公告图片" style={{ width: 100, height: 50 }} src={text} />,
-    },
-    {
       title: '内容',
       dataIndex: 'content',
       hideInForm: true,

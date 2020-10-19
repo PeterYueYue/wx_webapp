@@ -343,7 +343,7 @@ const ProtectRights = (props) => {
             <a style={{ fontWeight: 600,}} >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

@@ -88,8 +88,41 @@ const Product = (props) => {
 
   const columns = [
     {
-      title: '所属小区',
-      dataIndex: 'name',
+      title: '省',
+      dataIndex: 'province',
+      hideInSearch: true,
+      rules: [
+        {
+          required: true,
+          message: '请输入',
+        },
+      ],
+    },
+    {
+      title: '市',
+      dataIndex: 'city',
+      hideInSearch: true, 
+      rules: [
+        {
+          required: true,
+          message: '请输入',
+        },
+      ],
+    },
+    {
+      title: '区',
+      dataIndex: 'zone',
+      hideInSearch: true, 
+      rules: [
+        {
+          required: true,
+          message: '请输入',
+        },
+      ],
+    },
+    {
+      title: '小区',
+      dataIndex: 'community',
       rules: [
         {
           required: true,
@@ -109,7 +142,7 @@ const Product = (props) => {
     },
     {
       title: '室号',
-      dataIndex: 'name',
+      dataIndex: 'room',
       rules: [
         {
           required: true,
@@ -119,7 +152,7 @@ const Product = (props) => {
     },
     {
       title: '家庭积分',
-      dataIndex: 'siteName',
+      dataIndex: 'point',
       hideInSearch: true, 
       rules: [
         {
@@ -128,20 +161,10 @@ const Product = (props) => {
         },
       ],
     },
-    {
-      title: '家庭成员',
-      dataIndex: 'sex',
-      hideInSearch: true,
-      rules: [
-        {
-          required: true,
-          message: '请输入',
-        },
-      ],
-    },
+    
     {
       title: '创建时间',
-      dataIndex: 'createDate',
+      dataIndex: 'strCreateDate',
       sorter: true,
       valueType: 'dateTime',
       hideInSearch: true,
@@ -163,19 +186,16 @@ const Product = (props) => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a
+          <a  
             onClick={() => {  
-              // handleUpdateModalVisible(true);
               setStepFormValues(record);
               handleModalVisible(record);
             }}
           >
-            修改
+            详情
           </a>
           <Divider type="vertical" />
-          {/* <a  onClick={() => idelete(record)}>删除</a> */}
-          <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
-            <a href="#">删除</a>
+            <Popconfirm title="确定要删除吗？" onConfirm={() => {deleteItem(record.id) } } onCancel={cancel}>
           </Popconfirm>
         </>
       ),
@@ -183,7 +203,6 @@ const Product = (props) => {
   ];
   // 列表
   const getProductList = (params) => {
-    return;
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
@@ -192,22 +211,13 @@ const Product = (props) => {
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
-            "name":params.name,
+            "community":params.community,
           })
         })
       }
     })
   }
   //删除
-  const idelete = (currentItem) => {
-    Modal.confirm({
-      title: '删除任务',
-      content: '确定删除该任务吗？',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => deleteItem(currentItem.id),
-    });
-  };
   const deleteItem= (id) => {
     return props.dispatch({
       type: 'productSort/productEdit',
@@ -234,7 +244,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="家庭列表"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -248,9 +258,6 @@ const [fileList1,setFileList1] = useState([]);
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined /> 新建
-          </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
@@ -263,8 +270,8 @@ const [fileList1,setFileList1] = useState([]);
                   }}
                   selectedKeys={[]}
                 >
-                  <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
+                  {/* <Menu.Item key="remove">批量删除</Menu.Item>
+                  <Menu.Item key="approval">批量审批</Menu.Item> */}
                 </Menu>
               }
             >
@@ -284,7 +291,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}
@@ -295,44 +302,7 @@ const [fileList1,setFileList1] = useState([]);
         onCancel={() =>{handleModalVisible(false)}} modalVisible={createModalVisible}
         reload={() =>{reload()}}
       >
-        {/* <ProTable
-          onSubmit={async value => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          rowKey="key"
-          type="form"
-        columns={columns}
-        rowSelection={{}}
-        /> */}
       </CreateForm>
-      {/* {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async value => {
-            const success = await handleUpdate(value);
-
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null} */}
     </PageHeaderWrapper>
   );
 };

@@ -104,7 +104,6 @@ const CreateForm = (props) => {
   }
   // 根据城市ID获取行政区列表数据
   const getAdministrativeDistrict = (id) => {
-
     props.dispatch({
       type: 'site/getlist',
       payload: {
@@ -205,7 +204,6 @@ const CreateForm = (props) => {
   const props1 = {
     name: 'file',
     action: api+ 'apiv2/',
-    // action: "https://cat.shishangbag.vip/sbag-server/back/upload/one",
     headers: {
       authorization: 'authorization-text',
     },

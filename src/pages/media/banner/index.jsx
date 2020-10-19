@@ -97,7 +97,6 @@ const Product = (props) => {
       title: '状态',
       dataIndex: 'bannerFlag',
       hideInForm: false,
-      hideInSearch: true,
       valueEnum: {
         0: {
           text: '隐藏',
@@ -253,7 +252,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个轮播&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

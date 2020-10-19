@@ -99,8 +99,8 @@ export default defineConfig({
               "routes":[
                 { path: '/shop/product',      name: 'product',      component: './shop/Product', }, //商品列表 
                 { path: '/shop/productEdit',  name: 'productEdit',  component: './shop/productEdit', hideInMenu:true,  },    //商品新增-商品编辑
-                // { path: '/shop/productOrder', name: 'productOrder', component: './shop/productOrder', },  //订单管理
-                // { path: '/shop/orderDetails', name: 'orderDetails', component: './shop/OrderDetails', hideInMenu:true,},   //订单详情
+                { path: '/shop/productOrder', name: 'productOrder', component: './shop/productOrder', },  //订单管理
+                { path: '/shop/orderDetails', name: 'orderDetails', component: './shop/OrderDetails', hideInMenu:true,},   //订单详情
                 // { path: '/shop/protectRights', name: 'protectRights', component: './shop/ProtectRights', },  //维权订单管理
                 // { path: '/shop/protectRightsDetails', name: 'protectRightsDetails', component: './shop/ProtectRightsDetails', hideInMenu:true,},   //维权订单详情
                 // { path: '/shop/productSort', name: 'productSort', component: './shop/productSort', }, //商品分类

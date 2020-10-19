@@ -263,7 +263,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

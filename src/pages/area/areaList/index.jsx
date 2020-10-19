@@ -10,6 +10,7 @@ import UpdateForm from './components/UpdateForm';
 import style from "./index.less"
 import { Link, connect } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
+import { set } from "lodash";
 
 
 
@@ -40,10 +41,6 @@ const SiteList = (props) => {
   const [openItem, setOpenItem] = useState(""); //开通
   const [siteValue, setSiteValue] = useState("")
   const [linkManName, setLinkManName] = useState("")
-
-
-
-
 
   useEffect(() => {
     getProvince()
@@ -93,10 +90,7 @@ const SiteList = (props) => {
       ),
     },
   ];
-  // 搜索查询
-  const search = () => {
-    getProductList()
-  }
+  
   // 获取省份列表数据
   const getProvince = () => {
     props.dispatch({
@@ -204,20 +198,22 @@ const SiteList = (props) => {
   // const onChange_community = (value, item) => getSite(value, item)   // 根据小区ID返回网点数据
   const onChange_State = (value, item) => getOpen(value, item)   // 下拉选取是否开通
   // 列表
+  
   let titleClassification = '';
-  if (provinceItem) {
-    titleClassification+=provinceItem.areaName;
-  }
-  if (cityItem) {
-    titleClassification+='-'+cityItem.areaName;
-  }
-  if (admDisItem) {
-    titleClassification+='-'+admDisItem.areaName;
-  }
-  if (streetItem) {
-    titleClassification+='-'+streetItem.areaName;
-  }
   const getProductList = (page) => {
+    console.log(123)
+    if (provinceItem) {
+      titleClassification+=provinceItem.areaName;
+    }
+    if (cityItem) {
+      titleClassification+='-'+cityItem.areaName;
+    }
+    if (admDisItem) {
+      titleClassification+='-'+admDisItem.areaName;
+    }
+    if (streetItem) {
+      titleClassification+='-'+streetItem.areaName;
+    }
     props.dispatch({
       type: 'site/productList',
       payload: {
@@ -271,6 +267,19 @@ const SiteList = (props) => {
   const reload = () => {
     getProductList()
   }
+  // 搜索查询
+  const search = () => {
+    getProductList()
+  }
+  //重置
+  const clearForm=()=> {//数据置空
+    location.reload();
+    // form.resetFields();
+    // setAdmDisItem();
+    // setCityItem()
+    // setStreetItem();
+    // getProductList()
+  }
   // 打开新建组件
   function openModalVisible() {
     handleModalVisible(true)
@@ -279,11 +288,7 @@ const SiteList = (props) => {
   function siteName(val) {
     console.log(val)
   }
-  function clearForm() {
-    form.resetFields();
-    setSiteValue("");
-    setLinkManName("");
-  }
+  
 
   // 分页处理
   const pagination = {
@@ -364,14 +369,11 @@ const SiteList = (props) => {
                 </Form.Item>
             </Col>
           </Row>
-
+          <div className={style.searBtnBox}>
+            <Button className={style.search} onClick={search} type="primary">查询</Button>
+            <Button onClick={clearForm}>重置</Button>
+          </div>
         </Form>
-
-        <div className={style.searBtnBox}>
-          <Button className={style.search} onClick={search} type="primary">查询</Button>
-          <Button onClick={openModalVisible} className={style.search} type="primary">新建</Button>
-          <Button onClick={clearForm}>重置</Button>
-        </div>
       </Card>
       <Table pagination={pagination} className={style.table} bordered={true} columns={columns} dataSource={list} />
       <CreateForm

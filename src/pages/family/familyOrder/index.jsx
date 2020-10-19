@@ -87,24 +87,27 @@ const UserList = (props) => {
 
   const columns = [
     {
-      title: '昵称',
-      dataIndex: 'nickName',
+      title: '投递物',
+      dataIndex: 'garbage',
+      hideInSearch: true,
+      hideInForm: true,
     },
     {
-      title: '手机号',
-      dataIndex: 'userMobile',
+      title: '投递积分',
+      dataIndex: 'point',
+      hideInSearch: true,
+      hideInForm: true,
     },
     {
-      title: '投递次数',
-      dataIndex: 'sendNumber',
+      title: '投递人手机号',
+      dataIndex: 'createUser',
+      hideInForm: true,
     },
     {
-      title: '获得总收益(rmb)',
-      dataIndex: 'totalMoney',
-    },
-    {
-      title: '剩余收益(rmb)',
-      dataIndex: 'residueMoney',
+      title: '袋子编号',
+      dataIndex: 'trashNo',
+      hideInSearch: true,
+      hideInForm: true,
     },
     {
       title: '状态',
@@ -113,25 +116,15 @@ const UserList = (props) => {
       hideInSearch: true,
       valueEnum: {
         0: {
-          text: '正常',
+          text: '未审核',
         },
         1: {
-          text: '冻结',
+          text: '成功',
+        },
+        2: {
+          text: '错误投递',
         },
       },
-    },
-    {
-      title: '用户类型',
-      dataIndex: 'userType',
-      hideInForm: false,
-      hideInSearch: true,
-      renderText: (item) => {
-        if(item==1) {
-          return '普通会员'
-        } else {
-          return 'VIP'
-        }
-      }
     },
     {
       title: '创建时间',
@@ -151,40 +144,38 @@ const UserList = (props) => {
         return defaultRender(item);
       },
     },
-    {
-      title: '操作',
-      dataIndex: 'id',
-      valueType: 'option',
-      render: (_, record) => (
-        <>
-          <a
-            onClick={() => {  
-              // handleUpdateModalVisible(true);
-              setStepFormValues(record);
-              handleModalVisible(record);
-            }}
-          >
-            查看详情
-          </a>
-          {/* <Divider type="vertical" />
-          <a  onClick={() => idelete(record)}>删除</a> */}
-        </>
-      ),
-    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'id',
+    //   valueType: 'option',
+    //   render: (_, record) => (
+    //     <>
+    //       <a
+    //         onClick={() => {  
+    //           // handleUpdateModalVisible(true);
+    //           setStepFormValues(record);
+    //           handleModalVisible(record);
+    //         }}
+    //       >
+    //         查看详情
+    //       </a>
+    //       {/* <Divider type="vertical" />
+    //       <a  onClick={() => idelete(record)}>删除</a> */}
+    //     </>
+    //   ),
+    // },
   ];
-  // 用户列表
+  // 投递分页
   const getProductList = (params) => {
-    return;
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.user.page',
+          'method': 'system.delivery.page',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
-            "nickName":params.nickName,
-            "userMobile":params.userMobile,
+            "createUser":params.createUser,
           })
         })
       }
@@ -224,7 +215,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="商品分类表格"
+        headerTitle="投递积分表格"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -274,7 +265,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

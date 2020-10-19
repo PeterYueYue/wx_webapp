@@ -270,7 +270,7 @@ const [fileList1,setFileList1] = useState([]);
             >
               {selectedRowKeys.length}
             </a>{' '}
-            行&nbsp;&nbsp;
+            条数据
           </div>
         )}
         form={{ initialValues: {community:community} }}

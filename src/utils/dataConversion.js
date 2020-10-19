@@ -35,7 +35,7 @@ if(token){
     }
 }else{
     if(payload.biz_content){
-        console.log(payload.biz_content)
+        // console.log(payload.biz_content)
         sign = md5(`app_id=${app_id}&biz_content=${payload.biz_content}&format=json&method=${payload.method}&microServiceIp=${microServiceIp}&nonce=${nonce}&releaseVersion=${releaseVersion}&timestamp=${timestamp}&version=1.00878b0d87e84486dad0a9856593fb7ac`)
     }else{
         sign = md5(`app_id=${app_id}&format=json&method=${payload.method}&microServiceIp=${microServiceIp}&nonce=${nonce}&releaseVersion=${releaseVersion}&timestamp=${timestamp}&token=${token}&version=1.00878b0d87e84486dad0a9856593fb7ac`)
@@ -50,7 +50,7 @@ let obj = {
     releaseVersion:releaseVersion,
     timestamp:timestamp,
     token:token?token:'',
-    microServiceIp:"10.9.0.4",
+    microServiceIp:microServiceIp,
     version:"1.0",
     sign:sign
 }

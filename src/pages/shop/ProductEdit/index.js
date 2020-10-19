@@ -68,8 +68,8 @@ const ProductEdit = (props) => {
                 state: res.result.state,
                 remark: res.result.remark,
                 typeId: res.result.typeId,
-                price: res.result.price,
-                marketPrice: res.result.marketPrice,
+                point: res.result.point,
+                cashPrice: res.result.cashPrice,
                 stock: res.result.stock,
                 tag: res.result.tag,
                 // supportIds: res.result.supports.map(e => e.id),
@@ -139,7 +139,7 @@ const ProductEdit = (props) => {
     const [fileList3, setFileList3] = useState([])
     // 主图
     const handleChange1 = (fileList) => {
-        setFileList1(fileList)
+        setFileList1(fileList);
     };
     // 轮播图
     const handleChange2 = (fileList) => {
@@ -153,21 +153,21 @@ const ProductEdit = (props) => {
     const onFinish = values => {
         let mainPic = '';
         let pics = [];
-        let description = '';
+        let description = [];
         if (fileList1.length > 0 && fileList2.length > 0) {
-            mainPic = fileList1[0].response.imgUrl;
-
+            mainPic = fileList1[0].response.result?fileList1[0].response.result.imgUrl:fileList1[0].response.imgUrl;
             fileList2.map((item, index) => {
-                pics.push(item.response.imgUrl)
+                pics.push(item.response.result?item.response.result.imgUrl:item.response.imgUrl)
             })
             if (fileList3.length > 0) {
-                fileList3.map((item, index) => { description += item.response.imgUrl + ',' })
+                fileList3.map((item, index) => { 
+                    description.push(item.response.result?item.response.result.imgUrl:item.response.imgUrl)
+                })
             }
         } else {
             message.warning('请添加图片');
             return;
         }
-        console.log(values);
         props.dispatch({
             type: 'shop/supportList',
             payload: {
@@ -177,16 +177,15 @@ const ProductEdit = (props) => {
                         "id": itemId,
                         "cashPrice": values.cashPrice,
                         "freight": values.freight,
-                        "marketPrice": values.marketPrice,
-                        "price": values.price,
                         "name": values.name,
+                        "point": values.point,
                         "pics": pics,
-                        "description": description,
+                        "description": description.toString(),
                         "mainPic": mainPic,
                         "productType": values.goodType,
                         "sn": values.sn,
                         "remark": values.remark,
-                        "useInstructions": values.useInstructions,
+                        // "useInstructions": values.useInstructions,
                         "supplierId": values.supplierId,
                         "supportIds": values.supportIds,
                         "tagId": values.tagId,
@@ -248,10 +247,10 @@ const ProductEdit = (props) => {
                                 })}
                             </Select>
                         </Form.Item>
-                        <Form.Item name={['price']} label="商品价格" rules={[{ required: true }]} >
+                        <Form.Item name={['cashPrice']} label="商品价格" rules={[{ required: true }]} >
                             <Input style={{ width: '100px' }} />
                         </Form.Item>
-                        <Form.Item name={['marketPrice']} label="商品售价" rules={[{ required: true }]} >
+                        <Form.Item name={['point']} label="商品积分" rules={[{ required: true }]} >
                             <Input style={{ width: '100px' }} />
                         </Form.Item>
                         <Form.Item name={['remark']} label="商品简介" rules={[{ required: false }]}>

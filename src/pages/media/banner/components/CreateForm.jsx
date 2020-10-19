@@ -37,6 +37,7 @@ const CreateForm = (props) => {
       form.setFieldsValue(props.modalVisible);
     }else{
       form.resetFields();
+      setItemId('');
       const fileList1 = '';
       setFileList1(fileList1)
     }
@@ -55,7 +56,7 @@ const CreateForm = (props) => {
   const onFinish = values => {
     let mainPic = '';
     if (fileList1.length > 0) {
-      mainPic = fileList1[0].response.imgUrl;
+      mainPic = fileList1[0].response.result?fileList1[0].response.result.imgUrl:fileList1[0].response.imgUrl;
     } else {
       message.warning('请添加图片');
     }
@@ -115,7 +116,7 @@ const CreateForm = (props) => {
         <Form.Item className={style.formItem1} wrapperCol={{ offset: 5 }}>
           <Col className={style.uploadBox} span={19}>
             <Alert
-              message="建议尺寸: 700*280像素,最多上传1张"
+              message="建议尺寸: 500*700像素,最多上传1张"
               type="info"
             />
           </Col>

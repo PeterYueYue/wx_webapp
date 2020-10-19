@@ -11,7 +11,7 @@ import UpdateForm from './components/UpdateForm';
 import styles from './index.less'
 
 import { updateRule, addRule, removeRule } from './service';
-
+import QRCode from 'qrcode.react';
 /**
  * 添加节点
  * @param fields
@@ -76,7 +76,7 @@ const handleRemove = async selectedRows => {
     return false;
   }
 };
-
+const url = 'https://www.wuxigf.com?goods=';
 const Product = (props) => {
   const [sorter, setSorter] = useState('');
   const [createModalVisible, handleModalVisible] = useState(false);
@@ -103,7 +103,19 @@ const Product = (props) => {
       render: (item) => {
         return <img alt="img" className={styles.productPic} src={item} />
       }
-
+    },
+    {
+      title: '二维码下载',
+      dataIndex: 'id',
+      valueType: 'textarea',
+      hideInSearch: true,
+      hideInForm: false,
+      render: (_, record) => (
+        <a onClick={() => { down(record) }}> 
+          下载二维码
+          <QRCode value={url+record.id} onClick={() => { down(record) }} size={500} id="qrCode" style={{'display': 'none'}} />
+        </a>
+      )
     },
     {
       title: '商品名称',
@@ -122,15 +134,23 @@ const Product = (props) => {
       valueType: 'textarea',
     },
     {
-      title: '  ',
+      title: '商品品牌',
       hideInForm: false,
       hideInSearch: true,
       dataIndex: 'supplierName',
       valueType: 'textarea',
     },
     {
-      title: '商品价格(rmb)',
+      title: '商品价格',
       dataIndex: 'price',
+      hideInSearch: true,
+      sorter: true,
+      hideInForm: false,
+      renderText: val => `${val}`,
+    },
+    {
+      title: '商品积分',
+      dataIndex: 'point',
       hideInSearch: true,
       sorter: true,
       hideInForm: false,
@@ -139,13 +159,6 @@ const Product = (props) => {
     {
       title: '商品库存',
       dataIndex: 'stock',
-      hideInSearch: true,
-      hideInForm: false,
-      valueType: 'textarea',
-    },
-    {
-      title: '商品销量',
-      dataIndex: 'sold',
       hideInSearch: true,
       hideInForm: false,
       valueType: 'textarea',
@@ -202,6 +215,41 @@ const Product = (props) => {
       ),
     },
   ];
+  const down = (item) => {//下载二维码
+    var Qr = document.getElementById('qrCode');
+    let image = new Image();
+    image.src = Qr.toDataURL("image/png");
+    console.log(item);
+    download(item.name, image.src)
+  }
+  function download(name, img) {
+    let imgData = img;
+    downloadFile(name + '.png', imgData);
+  }
+  //下载
+  function downloadFile(fileName, content) {
+    let aLink = document.createElement('a');
+    let blob = base64ToBlob(content); //new Blob([content]);
+    let evt = document.createEvent("HTMLEvents");
+    evt.initEvent("click", true, true);//initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
+    aLink.download = fileName;
+    aLink.href = URL.createObjectURL(blob);
+    aLink.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));//兼容火狐
+  }
+  //base64转blob
+  function base64ToBlob(code) {
+    let parts = code.split(';base64,');
+    let contentType = parts[0].split(':')[1];
+    let raw = window.atob(parts[1]);
+    let rawLength = raw.length;
+
+    let uInt8Array = new Uint8Array(rawLength);
+
+    for (let i = 0; i < rawLength; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i);
+    }
+    return new Blob([uInt8Array], { type: contentType });
+  }
   const confirm = async (id) => {
     // message.success('点击了确定');
     await props.dispatch({
@@ -257,7 +305,7 @@ const Product = (props) => {
     <PageHeaderWrapper>
       <ProTable
         pagination={{ pageSize: 6, current: current }}
-        headerTitle="查询表格"
+        headerTitle="商品表格"
         actionRef={actionRef}
         rowKey="key"
         onChange={(_, _filter, _sorter) => {
@@ -307,7 +355,7 @@ const Product = (props) => {
             >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params => getProductList(params)}

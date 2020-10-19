@@ -134,21 +134,14 @@ const ProductOrder = (props) => {
       }
     },
     {
-      title: '单价(ssb)',
+      title: '单价(元)',
       dataIndex: 'unitPrice',
       hideInSearch:true,
       valueType: 'textarea',
     },
-    {
-      title: '抵扣(ssb)',
-      hideInForm:false,
-      hideInSearch:true,
-      dataIndex: 'sbagAmount',
-      valueType: 'textarea',
-    },
     { 
-      title: '实付(rmb)',
-      dataIndex: 'cashAmount',
+      title: '积分',
+      dataIndex: 'point',
       hideInSearch:true,
       sorter: true,
       hideInForm: false,
@@ -173,17 +166,6 @@ const ProductOrder = (props) => {
         2: { text: '待收货', status: 'Default', },
         3: { text: '已完成', status: 'Success', },
         4: { text: '已取消', status: 'Error', },
-      },
-    },
-    {
-      title: '维权状态',
-      dataIndex: 'roState',
-      hideInSearch:false,
-      hideInForm: false,
-      valueEnum: {
-        "-1": { text: '未维权', status: 'Success', },
-        "0": { text: '维权中', status: 'Warning', },
-        "1": { text: '已维权', status: 'Success', },
       },
     },
     {
@@ -330,7 +312,7 @@ const ProductOrder = (props) => {
     return props.dispatch({
         type: 'shop/productList',
         payload: { ...dataConversion({
-          'method':'order.page',
+          'method':'system.order.page',
           "biz_content":JSON.stringify({
             "startCreateDate":dateTime,
             "endCreateDate":"",
@@ -349,7 +331,7 @@ const ProductOrder = (props) => {
     <PageHeaderWrapper>
       <ProTable
         pagination={{ pageSize: 10,current:current }}
-        headerTitle="查询表格"
+        headerTitle="订单表格"
         actionRef={actionRef}
         rowKey="key"
         onChange={(_, _filter, _sorter) => {
@@ -413,7 +395,7 @@ const ProductOrder = (props) => {
             <a style={{ fontWeight: 600,}} >
               {selectedRowKeys.length}
             </a>{' '}
-            个商品&nbsp;&nbsp;
+            条数据
           </div>
         )}
         request={params =>  getProductList(params)}
