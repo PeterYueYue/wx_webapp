@@ -76,7 +76,7 @@ const handleRemove = async selectedRows => {
     return false;
   }
 };
-const url = 'https://www.wuxigf.com?goods=';
+const url = 'https://gateway.wuxigf.com?goods=';
 const Product = (props) => {
   const [sorter, setSorter] = useState('');
   const [createModalVisible, handleModalVisible] = useState(false);
@@ -142,7 +142,7 @@ const Product = (props) => {
     },
     {
       title: '商品价格',
-      dataIndex: 'price',
+      dataIndex: 'cashPrice',
       hideInSearch: true,
       sorter: true,
       hideInForm: false,

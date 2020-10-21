@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, message, Input, Modal, Select,  Upload, } from 'antd';
+import { Form, Button, message, Input, Modal, Select, Upload, } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import api from './../../../../services/api';
 const { Option } = Select;
@@ -35,6 +35,7 @@ const CreateForm = (props) => {
 
 
   useEffect(() => {
+    getProvince()
     console.log(props.modalVisible.id)
     if (props.modalVisible.id) {//设置编辑
       setItemId(props.modalVisible.id);
@@ -42,8 +43,10 @@ const CreateForm = (props) => {
       form.setFieldsValue(props.modalVisible);
     } else {
       form.resetFields();
+      console.log(6666)
+
     }
-    getProvince()
+
   }, [props.modalVisible.id]);
 
   // 获取详情
@@ -77,7 +80,7 @@ const CreateForm = (props) => {
       type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.area.children',
+          'method': 'system.area.allChildren',
           "biz_content": JSON.stringify({ "id": "0" })
         })
       }
@@ -168,14 +171,14 @@ const CreateForm = (props) => {
 
 
 
-  // 提交订单
+  // 
   const onFinish = values => {
     console.log(values)
     let data = values;
     data.province = ''
     data.city = ''
     data.zone = ''
-   
+
     if (props.modalVisible.id) {
       data.id = props.modalVisible.id
     }
@@ -203,7 +206,7 @@ const CreateForm = (props) => {
 
   const props1 = {
     name: 'file',
-    action: api+ 'apiv2/',
+    action: api + 'apiv2/',
     headers: {
       authorization: 'authorization-text',
     },
@@ -275,9 +278,12 @@ const CreateForm = (props) => {
           <Input placeholder="请输入" style={{ width: '200px' }} />
         </Form.Item>
         {/* 导入户表 */}
-        <Upload {...props1}>
-          <Button icon={<UploadOutlined />}>导入户表</Button>
-        </Upload>,
+        {
+          itemId ?
+            <Upload {...props1}>
+              <Button icon={<UploadOutlined />}>导入户表</Button>
+            </Upload> : null
+        }
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
             确定

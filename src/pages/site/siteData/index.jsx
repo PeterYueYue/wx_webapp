@@ -6,6 +6,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
+// import UploadImg from "./../productEdit/components/Upload"
 import style from "./index.less"
 import { Link, connect } from 'umi';
 import dataConversion from '@/utils/dataConversion.js'
@@ -35,7 +36,6 @@ const handleAdd = async fields => {
 
 const handleUpdate = async fields => {
   const hide = message.loading('正在配置');
-      console.log(fields)
   try {
     await updateRule({
       name: fields.name,
@@ -73,11 +73,12 @@ const handleRemove = async selectedRows => {
 };
 
 
-const UserList = (props) => {
+const Product = (props) => {
   const [form] = Form.useForm();
   const [sorter, setSorter] = useState('');
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [support, setSupport] = useState([])
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef();
   const [list, setList] = useState([])
@@ -87,63 +88,23 @@ const UserList = (props) => {
 
   const columns = [
     {
-      title: '昵称',
-      dataIndex: 'nickName',
+      title: '网点名称',
+      dataIndex: 'name',
     },
     {
-      title: '手机号',
-      dataIndex: 'mobile',
-    },
-    {
-      title: '头像',
-      dataIndex: 'headPortrait',
-      hideInSearch: true,
-      hideInForm: false,
-      render: text => <img alt="轮播图片" style={{ width: 100, height: 50 }} src={text} />,
-    },
-    {
-      title: '省',
-      dataIndex: 'province',
+      title: '投递数量(今日)',
+      dataIndex: 'todayDelivery',
       hideInSearch: true,
     },
     {
-      title: '市',
-      dataIndex: 'city',
+      title: '投递数量(七天)',
+      dataIndex: 'sevenDayDelivery',
       hideInSearch: true,
     },
     {
-      title: '区',
-      dataIndex: 'zone',
+      title: '投递数量(三十天)',
+      dataIndex: 'thirtyDayDelivery',
       hideInSearch: true,
-    },
-    {
-      title: '小区',
-      dataIndex: 'community',
-      hideInSearch: true,
-    },
-    {
-      title: '楼号',
-      dataIndex: 'build',
-      hideInSearch: true,
-    },
-    {
-      title: '室号',
-      dataIndex: 'room',
-      hideInSearch: true,
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      hideInForm: true,
-      hideInSearch: true,
-      valueEnum: {
-        1: {
-          text: '正常',
-        },
-        0: {
-          text: '冻结',
-        },
-      },
     },
     {
       title: '创建时间',
@@ -169,55 +130,38 @@ const UserList = (props) => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <Popconfirm title="确定要修改用户吗？" onConfirm={() => {freeze(record.id) } } onCancel={cancel}>
-            <a href="#">{record.state==1?'冻结':'解冻'}</a>
-          </Popconfirm>
-          {/* <Divider type="vertical" />
-          <a  onClick={() => idelete(record)}>删除</a> */}
+          {/* <a
+            onClick={() => {  
+              // handleUpdateModalVisible(true);
+              setStepFormValues(record);
+              handleModalVisible(record);
+            }}
+          >
+            查看详情
+          </a> */}
+          <Link to={`/site/siteDetail?id=${record.siteId}`} >  查看详情  </Link>
         </>
       ),
     },
   ];
-  // 用户列表
+  // 列表
   const getProductList = (params) => {
-    // return;
     return props.dispatch({
       type: 'productSort/productList',
       payload: {
         ...dataConversion({
-          'method': 'system.user.page',
+          'method': 'system.site.dataPage',
           "biz_content": JSON.stringify({
             "pageNumber": params.current,
             "pageSize": params.pageSize,
-            "nickName":params.nickName,
-            "userMobile":params.userMobile,
+            "name":params.name,
           })
         })
       }
     })
-  }
-  // 冻结
-  const freeze= (id) => {
-    return props.dispatch({
-      type: 'productSort/productEdit',
-      payload: {
-        ...dataConversion({
-          'method': 'system.user.setState',
-          "biz_content": JSON.stringify({
-            "id": id,
-          })
-        })
-      }
-    }).then((res) => { 
-      actionRef.current.reload();
-    })
-  }
-  function cancel() {
-    message.error('点击了取消');
   }
   //删除
   const idelete = (currentItem) => {
-    console.log(currentItem);
     Modal.confirm({
       title: '删除任务',
       content: '确定删除该任务吗？',
@@ -231,7 +175,7 @@ const UserList = (props) => {
       type: 'productSort/productEdit',
       payload: {
         ...dataConversion({
-          'method': 'productType.delete',
+          'method': 'system.supervisor.delete',
           "biz_content": JSON.stringify({
             "id": id,
           })
@@ -241,6 +185,9 @@ const UserList = (props) => {
       actionRef.current.reload();
     })
   }
+  function cancel() {
+    message.error('点击了取消');
+  }
   const reload = ()=> {
     actionRef.current.reload();
   }
@@ -249,7 +196,7 @@ const [fileList1,setFileList1] = useState([]);
   return (
     <PageHeaderWrapper>
       <ProTable
-        headerTitle="用户表格"
+        headerTitle="网点数据列表"
         actionRef={actionRef}
         pagination={{ pageSize: 10 }}
         rowKey="key"
@@ -351,7 +298,7 @@ const [fileList1,setFileList1] = useState([]);
     </PageHeaderWrapper>
   );
 };
-export default connect(({ ListUser, loading }) => ({
-  ListUser: ListUser,
-  submitting: loading.effects['ListUser/UserList'],
-}))(UserList);
+export default connect(({ shop, loading }) => ({
+  shop: shop,
+  submitting: loading.effects['shop/Product'],
+}))(Product);

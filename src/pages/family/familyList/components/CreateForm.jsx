@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Row, Col, Button, Card, Divider, Table , message, Input, Tabs, Modal, Radio, Alert } from 'antd';
+import { Form, Row, Col, Button, Card, Divider, Table , message, Input, notification , Modal, Radio, Alert } from 'antd';
 import dataConversion from '@/utils/dataConversion.js'
 import { connect } from 'umi';
 import style from "./../index.less"
@@ -43,19 +43,25 @@ const CreateForm = (props) => {
     })
   }
   const change = (e) => {//解绑
-    console.log(e);
     return props.dispatch({
       type: 'shop/orderDetails',
       payload: {
         ...dataConversion({
-          'method': 'system.pointList.page',
+          'method': 'system.family.unBindUser',
           "biz_content": JSON.stringify({
             "id": e,
           })
         })
       }
     }).then(res=>{
-      
+      if(res.code==10000) {
+        notification.success({
+          description: '退出成功',
+          message: '退出成功',
+        });
+        getList(itemId)
+        getProductList(itemId);
+      }
     })
   }
   // 积分列表

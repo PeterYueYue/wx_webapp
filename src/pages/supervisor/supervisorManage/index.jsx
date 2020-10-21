@@ -110,6 +110,7 @@ const Product = (props) => {
     {
       title: '所属网点',
       dataIndex: 'siteName',
+      hideInSearch: true,
       rules: [
         {
           required: true,

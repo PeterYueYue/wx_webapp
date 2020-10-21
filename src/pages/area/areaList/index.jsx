@@ -78,11 +78,11 @@ const SiteList = (props) => {
             setAreaOpen(record)
           }}
           >{record.isOpen==0?"开通":"关闭"} </a>
-          <a onClick={() => {
+          {/* <a onClick={() => {
             // setSiteItem(record)
             // handleModalVisible(true)
           }}
-          >编辑</a>
+          >编辑</a> */}
           <Popconfirm title="确定删除吗？" onConfirm={() => deleteItem(record.id)} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
             <a>删除</a>
           </Popconfirm>
@@ -191,9 +191,28 @@ const SiteList = (props) => {
   //   })
   // }
 
-  const onChange_province = (value, item) => getCitys(value, item) // 下拉选取省
-  const onChange_citys = (value, item) => getAdministrativeDistrict(value, item)  // 下拉选取市
-  const onChange_administrativeDistrict = (value, item) => getStreet(value, item)  // 下拉选取区
+  const onChange_province = (value, item) => {
+    getCitys(value, item) // 下拉选取省
+    form.setFieldsValue({
+      city: '',
+      administrativeDistrict: '',
+      street: '',
+    })
+  }
+  const onChange_citys = (value, item) => {
+    getAdministrativeDistrict(value, item)
+    form.setFieldsValue({
+      administrativeDistrict: '',
+      street: '',
+    })
+
+  } // 下拉选取市
+  const onChange_administrativeDistrict = (value, item) => {
+    getStreet(value, item)  // 下拉选取区
+    form.setFieldsValue({
+      street: '',
+    })
+  }
   const onChange_street = (value, item) => getCommunity(value, item) // 下拉选取街道
   // const onChange_community = (value, item) => getSite(value, item)   // 根据小区ID返回网点数据
   const onChange_State = (value, item) => getOpen(value, item)   // 下拉选取是否开通
@@ -239,7 +258,7 @@ const SiteList = (props) => {
       type: 'site/getlist',
       payload: {
         ...dataConversion({
-          'method': 'system.area.setOpen',
+          'method': 'system.area.openStreet',
           "biz_content": JSON.stringify({
             "id": value.id,
           })
@@ -273,12 +292,39 @@ const SiteList = (props) => {
   }
   //重置
   const clearForm=()=> {//数据置空
-    location.reload();
-    // form.resetFields();
-    // setAdmDisItem();
-    // setCityItem()
-    // setStreetItem();
+    // location.reload();
+
+    
+    setProvinceItem("");
+    setAdmDisItem("");
+    setCityItem("")
+    setStreetItem("");
+    form.resetFields();
+
     // getProductList()
+    props.dispatch({
+      type: 'site/productList',
+      payload: {
+        ...dataConversion({
+          'method': 'system.area.page',
+          "biz_content": JSON.stringify({
+            "pageNumber": 1,
+            "pageSize": pageSize,
+            "titleClassification": "",
+            "areaName": siteValue,
+            "isOpen": openItem.id,
+          })
+        })
+      }
+    }).then(res => {
+      setList(res.data)
+      setTotal(res.total)
+      setCurrent(res.current)
+    })
+
+    
+    
+    
   }
   // 打开新建组件
   function openModalVisible() {

@@ -99,8 +99,23 @@ const UserList = (props) => {
       hideInForm: true,
     },
     {
-      title: '投递人手机号',
+      title: '督导员',
       dataIndex: 'createUser',
+      hideInForm: true,
+    },
+    {
+      title: '小区',
+      dataIndex: 'community',
+      hideInForm: true,
+    },
+    {
+      title: '楼号',
+      dataIndex: 'build',
+      hideInForm: true,
+    },
+    {
+      title: '室号',
+      dataIndex: 'room',
       hideInForm: true,
     },
     {
@@ -176,6 +191,9 @@ const UserList = (props) => {
             "pageNumber": params.current,
             "pageSize": params.pageSize,
             "createUser":params.createUser,
+            "community":params.community,
+            "build":params.build,
+            "room":params.room,
           })
         })
       }

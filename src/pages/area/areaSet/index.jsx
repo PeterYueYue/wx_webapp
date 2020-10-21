@@ -234,9 +234,9 @@ const [fileList1,setFileList1] = useState([]);
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined /> 新建
-          </Button>,
+          // <Button type="primary" onClick={() => handleModalVisible(true)}>
+          //   <PlusOutlined /> 新建
+          // </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
