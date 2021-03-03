@@ -64,6 +64,8 @@ const handleRemove = async selectedRows => {
     });
     hide();
     message.success('删除成功，即将刷新');
+
+    
     return true;
   } catch (error) {
     hide();
